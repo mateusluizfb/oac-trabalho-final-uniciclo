@@ -1,0 +1,11 @@
+# quartus
+*.rpt
+*.txt
+*.bak*
+*echo*
+ula.qws
+
+db/
+incremental_db/
+output_files/
+hc_output/
