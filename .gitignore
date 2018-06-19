@@ -12,3 +12,6 @@ hc_output/
 
 testbenchs/rtl_work/**/*
 testbenchs/vsim.wlf
+testbenchs/msim_transcript
+testbenchs/*.do
+testbenchs/*.bak
