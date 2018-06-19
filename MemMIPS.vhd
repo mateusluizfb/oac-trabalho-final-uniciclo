@@ -19,8 +19,8 @@ architecture arch of MemMIPS is
 signal sin4: std_logic_vector(31 downto 0) := X"00000004";
 
 signal init_address: std_logic_vector(31 downto 0);
-signal j_address: std_logic_vector(31 downto 0);
-signal m1_out: std_logic_vector(31 downto 0);
+signal jump_address: std_logic_vector(31 downto 0);
+signal mux_i1_out: std_logic_vector(31 downto 0);
 signal pc_out: std_logic_vector(31 downto 0);
 SIGNAL data : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL q : STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -62,36 +62,36 @@ COMPONENT ramtest
 END COMPONENT;
 
 begin
-    m1_i1: m1
+    mux_i1: m1
     port map (
         sel => m1_sin,
-        input0 => j_address,
+        input0 => jump_address,
         input1 => init_address,
-        output1 => m1_out
+        output1 => mux_i1_out
     );
 
     pc_i1: pc
     port map (
         clk => clk,
         wpc => wpc,
-        in1 => m1_out,
+        in1 => mux_i1_out,
         out1 => pc_out
     );
 
     somador_pc_i1: somador_pc
     port map (
         input1 => pc_out,
-        output1 => j_address
+        output1 => jump_address
     );
 
     i1 : ramtest
     PORT MAP (
--- list connections between master ports and signals
-    address => pc_out(9 downto 2),
-    clock => clk0,
-    data => data,
-    q => instruction,
-    wren => wren
+      -- list connections between master ports and signals
+      address => pc_out(9 downto 2),
+      clock => clk0,
+      data => data,
+      q => instruction,
+      wren => wren
     );
 
 init : process (clk,pc_out)
