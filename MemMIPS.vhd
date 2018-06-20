@@ -22,9 +22,9 @@ signal init_address: std_logic_vector(31 downto 0);
 signal jump_address: std_logic_vector(31 downto 0);
 signal mux_i1_out: std_logic_vector(31 downto 0);
 signal pc_out: std_logic_vector(31 downto 0);
-SIGNAL data : STD_LOGIC_VECTOR(31 DOWNTO 0);
-SIGNAL q : STD_LOGIC_VECTOR(31 DOWNTO 0);
-SIGNAL wren : STD_LOGIC;
+signal data : std_logic_vector(31 downto 0);
+signal q : std_logic_vector(31 downto 0);
+signal wren : std_logic;
 
 component m1
     port (
@@ -51,15 +51,15 @@ component somador_pc
   );
 end component;
 
-COMPONENT ramtest
-    PORT (
-    address : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-    clock : IN STD_LOGIC;
-    data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-    q : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-    wren : IN STD_LOGIC
+component ramtest
+    port (
+    address : in std_logic_vector(7 downto 0);
+    clock : in std_logic;
+    data : in std_logic_vector(31 downto 0);
+    q : out std_logic_vector(31 downto 0);
+    wren : in std_logic
     );
-END COMPONENT;
+end component;
 
 begin
     mux_i1: m1
@@ -85,7 +85,7 @@ begin
     );
 
     i1 : ramtest
-    PORT MAP (
+    port map (
       -- list connections between master ports and signals
       address => pc_out(9 downto 2),
       clock => clk0,
