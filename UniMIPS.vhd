@@ -32,12 +32,9 @@ signal reg_dst_out: std_logic_vector(4 downto 0);
 
 component MemMIPS
     port (
-    clk: in std_logic;
-    clk0: in std_logic;
-    mux_sin: in std_logic;
-    wpc: in std_logic;
-    instruction: out std_logic_vector(31 downto 0);
-    out_pc: out std_logic_vector(31 downto 0)
+    clk, clk0, mux_sin, wpc         : in std_logic;
+    instruction                     : out std_logic_vector(31 downto 0);
+    out_pc                          : out std_logic_vector(31 downto 0)
     );
 end component;
 
@@ -56,10 +53,10 @@ end component;
 component mux
     generic (WSIZE : natural := 5);
     port (
-    sel : in std_logic;
-    input0 : in std_logic_vector(4 downto 0);
-    input1 : in std_logic_vector(4 downto 0);
-    output1: out std_logic_vector(4 downto 0)
+    sel                             : in std_logic;
+    input0                          : in std_logic_vector(4 downto 0);
+    input1                          : in std_logic_vector(4 downto 0);
+    output1                         : out std_logic_vector(4 downto 0)
   );
 end component;
 
