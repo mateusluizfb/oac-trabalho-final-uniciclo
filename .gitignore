@@ -3,7 +3,8 @@
 *.txt
 *.bak*
 *echo*
-ula.qws
+*.qws
+*.qdf
 
 db/
 incremental_db/
