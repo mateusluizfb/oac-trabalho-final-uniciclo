@@ -4,18 +4,17 @@ library ieee ;
 
 entity UniMIPS is
     port (
-    clk: in std_logic;
-    clk0: in std_logic;
-    write_data: in std_logic_vector(31 downto 0);
-    r1_out: out std_logic_vector(31 downto 0);
-    r2_out: out std_logic_vector(31 downto 0);
+    clk, clk0                       : in std_logic;
+    write_data                      : in std_logic_vector(31 downto 0);
+    r1_out                          : out std_logic_vector(31 downto 0);
+    r2_out                          : out std_logic_vector(31 downto 0);
     -- sinais de controle
-    mux_sin: in std_logic;
-    mux_reg_dst: in std_logic;
-    wpc: in std_logic;
+    mux_sin                         : in std_logic;
+    mux_reg_dst                     : in std_logic;
+    wpc                             : in std_logic;
     --*sinais de controle
     -- sinal de entrada breg
-    out_pc: out std_logic_vector(31 downto 0)
+    out_pc                          : out std_logic_vector(31 downto 0)
     );
 end entity ; -- UniMIPS
 
