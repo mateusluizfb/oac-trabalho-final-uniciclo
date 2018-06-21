@@ -14,7 +14,8 @@ entity UniMIPS is
     wpc                             : in std_logic;
     --*sinais de controle
     -- sinal de entrada breg
-    out_pc                          : out std_logic_vector(31 downto 0)
+    instruction_out                 : out std_logic_vector(31 downto 0);
+    inst_counter                    : out std_logic_vector(31 downto 0)
     );
 end entity ; -- UniMIPS
 
@@ -61,6 +62,7 @@ end component;
 
 begin
 
+    instruction_out <= instruction;
     -- instacia  a memoria de instruções
     inst_mem_i1: MemMIPS
     port map (
@@ -69,7 +71,7 @@ begin
         mux_sin => mux_sin,
         wpc => wpc,
         instruction => instruction,
-        out_pc => out_pc
+        out_pc => inst_counter
     );
 
     -- instacia o banco de registradores

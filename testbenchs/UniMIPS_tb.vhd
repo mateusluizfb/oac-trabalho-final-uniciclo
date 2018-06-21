@@ -9,7 +9,8 @@ signal clk : std_logic;
 signal clk0 : std_logic;
 signal mux_reg_dst : std_logic;
 signal mux_sin : std_logic;
-signal out_pc : std_logic_vector(31 downto 0);
+signal inst_counter : std_logic_vector(31 downto 0);
+signal instruction_out : std_logic_vector(31 downto 0);
 signal r1_out : std_logic_vector(31 downto 0);
 signal r2_out : std_logic_vector(31 downto 0);
 signal wpc : std_logic;
@@ -20,7 +21,8 @@ component UniMIPS
     clk0 : in std_logic;
     mux_reg_dst : in std_logic;
     mux_sin : in std_logic;
-    out_pc : out std_logic_vector(31 downto 0);
+    inst_counter : out std_logic_vector(31 downto 0);
+    instruction_out : out std_logic_vector(31 downto 0);
     r1_out : out std_logic_vector(31 downto 0);
     r2_out : out std_logic_vector(31 downto 0);
     wpc : in std_logic;
@@ -35,19 +37,20 @@ begin
     clk0 => clk0,
     mux_reg_dst => mux_reg_dst,
     mux_sin => mux_sin,
-    out_pc => out_pc,
+    inst_counter => inst_counter,
+    instruction_out => instruction_out,
     r1_out => r1_out,
     r2_out => r2_out,
     wpc => wpc,
     write_data => write_data
     );
 
-init : process( clk, clk0 )
+init : process
 begin
-    m1_sin <= '1';
+    mux_sin <= '1';
     wpc <= '1';
     wait for 100 ps;
-    m1_sin <= '0';
+    mux_sin <= '0';
     wait for 100 ps;
     wait;
 end process init; -- init
