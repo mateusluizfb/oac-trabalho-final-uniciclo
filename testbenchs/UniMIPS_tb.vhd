@@ -42,9 +42,13 @@ begin
     write_data => write_data
     );
 
-init : process( sensitivity_list )
+init : process( clk, clk0 )
 begin
-    
-wait;
+    m1_sin <= '1';
+    wpc <= '1';
+    wait for 100 ps;
+    m1_sin <= '0';
+    wait for 100 ps;
+    wait;
 end process init; -- init
 end architecture ; -- arch
