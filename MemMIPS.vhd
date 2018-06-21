@@ -51,7 +51,7 @@ component somador_pc
   );
 end component;
 
-component ramtest
+component ram
     port (
     address : in std_logic_vector(7 downto 0);
     clock : in std_logic;
@@ -84,7 +84,7 @@ begin
         output1 => jump_address
     );
 
-    i1 : ramtest
+    i1 : ram
     port map (
       -- list connections between master ports and signals
       address => pc_out(9 downto 2),
