@@ -4,7 +4,7 @@
 -- MODULE: altsyncram 
 
 -- ============================================================
--- File Name: ramtest.vhd
+-- File Name: ram.vhd
 -- Megafunction Name(s):
 -- 			altsyncram
 --
@@ -39,7 +39,7 @@ USE ieee.std_logic_1164.all;
 LIBRARY altera_mf;
 USE altera_mf.all;
 
-ENTITY ramtest IS
+ENTITY ram IS
 	PORT
 	(
 		address		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
@@ -48,10 +48,10 @@ ENTITY ramtest IS
 		wren		: IN STD_LOGIC ;
 		q		: OUT STD_LOGIC_VECTOR (31 DOWNTO 0)
 	);
-END ramtest;
+END ram;
 
 
-ARCHITECTURE SYN OF ramtest IS
+ARCHITECTURE SYN OF ram IS
 
 	SIGNAL sub_wire0	: STD_LOGIC_VECTOR (31 DOWNTO 0);
 
@@ -90,7 +90,7 @@ BEGIN
 	GENERIC MAP (
 		clock_enable_input_a => "BYPASS",
 		clock_enable_output_a => "BYPASS",
-		init_file => "ramtest.mif",
+		init_file => "ram.mif",
 		intended_device_family => "Cyclone II",
 		lpm_hint => "ENABLE_RUNTIME_MOD=NO",
 		lpm_type => "altsyncram",
@@ -137,7 +137,7 @@ END SYN;
 -- Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "0"
 -- Retrieval info: PRIVATE: JTAG_ID STRING "NONE"
 -- Retrieval info: PRIVATE: MAXIMUM_DEPTH NUMERIC "0"
--- Retrieval info: PRIVATE: MIFfilename STRING "ramtest.mif"
+-- Retrieval info: PRIVATE: MIFfilename STRING "ram.mif"
 -- Retrieval info: PRIVATE: NUMWORDS_A NUMERIC "256"
 -- Retrieval info: PRIVATE: RAM_BLOCK_TYPE NUMERIC "0"
 -- Retrieval info: PRIVATE: READ_DURING_WRITE_MODE_PORT_A NUMERIC "3"
@@ -154,7 +154,7 @@ END SYN;
 -- Retrieval info: LIBRARY: altera_mf altera_mf.altera_mf_components.all
 -- Retrieval info: CONSTANT: CLOCK_ENABLE_INPUT_A STRING "BYPASS"
 -- Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_A STRING "BYPASS"
--- Retrieval info: CONSTANT: INIT_FILE STRING "ramtest.mif"
+-- Retrieval info: CONSTANT: INIT_FILE STRING "ram.mif"
 -- Retrieval info: CONSTANT: INTENDED_DEVICE_FAMILY STRING "Cyclone II"
 -- Retrieval info: CONSTANT: LPM_HINT STRING "ENABLE_RUNTIME_MOD=NO"
 -- Retrieval info: CONSTANT: LPM_TYPE STRING "altsyncram"
@@ -176,10 +176,10 @@ END SYN;
 -- Retrieval info: CONNECT: @data_a 0 0 32 0 data 0 0 32 0
 -- Retrieval info: CONNECT: @wren_a 0 0 0 0 wren 0 0 0 0
 -- Retrieval info: CONNECT: q 0 0 32 0 @q_a 0 0 32 0
--- Retrieval info: GEN_FILE: TYPE_NORMAL ramtest.vhd TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL ramtest.inc FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL ramtest.cmp TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL ramtest.bsf FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL ramtest_inst.vhd FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL ramtest_syn.v TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL ram.vhd TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL ram.inc FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL ram.cmp TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL ram.bsf FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL ram_inst.vhd FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL ram_syn.v TRUE
 -- Retrieval info: LIB_FILE: altera_mf
