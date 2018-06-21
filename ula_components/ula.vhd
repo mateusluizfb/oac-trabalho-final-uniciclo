@@ -57,6 +57,7 @@ begin
 				when RTL		=> resultado32 <= std_logic_vector(unsigned(B) rol to_integer(unsigned(A)));
 				when RTR		=> resultado32 <= std_logic_vector(unsigned(B) ror to_integer(unsigned(A)));
 				when SRA_OP	=> resultado32 <= to_stdlogicvector(to_bitvector(B) sra to_integer(unsigned(A)));
+				when LUI		=> resultado32 <= std_logic_vector(unsigned(B) sll 16);
 				when others => resultado32 <= (others => '0');
 			end case;
 			

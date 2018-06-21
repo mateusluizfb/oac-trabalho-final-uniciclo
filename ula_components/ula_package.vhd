@@ -8,7 +8,7 @@ package ula_package is
 		NOR_OP, XOR_OP,
 		SLL_OP, SRL_OP,
 		SRA_OP, RTL,
-		RTR
+		RTR, LUI
 	);
 
 end package;

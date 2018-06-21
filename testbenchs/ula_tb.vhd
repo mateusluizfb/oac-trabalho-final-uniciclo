@@ -292,6 +292,14 @@ ARCHITECTURE ula_arch OF ula_tb IS
 		wait for 10 ns;
 		assert (ula_out = x"FFFFFFFF");
 		
+		-- Test LUI
+		
+		A <= std_LOGIC_VECTOR(to_signed(0, 32));
+		B <= x"0000FFFF";
+		ula_op <= LUI;
+		wait for 10 ns;
+		assert (ula_out = x"FFFF0000");
+		
 		-- Test ula op 00
 		
 		ula_control_op <= "00";
