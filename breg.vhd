@@ -38,9 +38,9 @@ begin
 				end loop;
 			end if;
 			
-			register_output_1 <= registers(to_integer(unsigned(register_input_1))); -- output retorna o valor do primeiro regitrador selecionado
-			register_output_2 <= registers(to_integer(unsigned(register_input_2))); -- output retorna o valor do segundo regitrador selecionado
 		end if;
+		register_output_1 <= registers(to_integer(unsigned(register_input_1))); -- output retorna o valor do primeiro regitrador selecionado
+		register_output_2 <= registers(to_integer(unsigned(register_input_2))); -- output retorna o valor do segundo regitrador selecionado
 	end process;
 
 end architecture;
