@@ -8,7 +8,6 @@ entity ula is
 	port (
 		A: 		 			in std_logic_vector(31 downto 0);
 		B: 		 			in std_logic_vector(31 downto 0);
-		ula_control_op:	in std_logic_vector(1 downto 0);
 		ula_op: 	 			in ULA_OPERATION;
 		ula_out:  			out std_logic_vector(31 downto 0);
 		zero: 	 			out std_logic;
@@ -23,7 +22,7 @@ architecture ula_architeture of ula is
 begin
 	ula_out <= resultado32;	
 	tmp <= std_logic_vector(signed(A) - signed(B));
-	init: process (A, B, ULA_OP, resultado32, tmp, overflow_temp, ula_control_op)
+	init: process (A, B, ULA_OP, resultado32, tmp, overflow_temp)
 	begin
 		if (resultado32 = X"00000000") then zero <= '1'; else zero <= '0'; end if;
 		if (ULA_OP = ADD) then
@@ -36,32 +35,25 @@ begin
 			overflow <= '0';
 		end if;
 		
-		if ula_control_op = "00" then -- Usado em LW e SW
-			resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
-		elsif ula_control_op = "01" then -- Usado em BEQ
-			resultado32 <= tmp;
-		else
-			case ULA_OP	is
-				when ADD    => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
-				when ADDU   => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
-				when SUB		=> resultado32 <= tmp;
-				when SUBU	=> resultado32 <= tmp;
-				when AND_OP	=> resultado32 <= A and B;
-				when OR_OP	=>	resultado32 <= A or B;
-				when XOR_OP => resultado32 <= A xor B;
-				when NOR_OP => resultado32 <= A nor B;
-				when SLT		=> resultado32 <= (0 => tmp(31), others => '0');
-				when SLTU	=> resultado32 <= (0 => tmp(31), others => '0');
-				when SLL_OP	=> resultado32 <= std_logic_vector(unsigned(B) sll to_integer(unsigned(A)));	
-				when SRL_OP	=> resultado32 <= std_logic_vector(unsigned(B) srl to_integer(unsigned(A)));
-				when RTL		=> resultado32 <= std_logic_vector(unsigned(B) rol to_integer(unsigned(A)));
-				when RTR		=> resultado32 <= std_logic_vector(unsigned(B) ror to_integer(unsigned(A)));
-				when SRA_OP	=> resultado32 <= to_stdlogicvector(to_bitvector(B) sra to_integer(unsigned(A)));
-				when LUI		=> resultado32 <= std_logic_vector(unsigned(B) sll 16);
-				when others => resultado32 <= (others => '0');
-			end case;
-			
-		end if; -- Todos os códigos do controle da ULA pode ser encontrado na página 227 do livro
+		case ULA_OP	is
+			when ADD    => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
+			when ADDU   => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
+			when SUB		=> resultado32 <= tmp;
+			when SUBU	=> resultado32 <= tmp;
+			when AND_OP	=> resultado32 <= A and B;
+			when OR_OP	=>	resultado32 <= A or B;
+			when XOR_OP => resultado32 <= A xor B;
+			when NOR_OP => resultado32 <= A nor B;
+			when SLT		=> resultado32 <= (0 => tmp(31), others => '0');
+			when SLTU	=> resultado32 <= (0 => tmp(31), others => '0');
+			when SLL_OP	=> resultado32 <= std_logic_vector(unsigned(B) sll to_integer(unsigned(A)));	
+			when SRL_OP	=> resultado32 <= std_logic_vector(unsigned(B) srl to_integer(unsigned(A)));
+			when RTL		=> resultado32 <= std_logic_vector(unsigned(B) rol to_integer(unsigned(A)));
+			when RTR		=> resultado32 <= std_logic_vector(unsigned(B) ror to_integer(unsigned(A)));
+			when SRA_OP	=> resultado32 <= to_stdlogicvector(to_bitvector(B) sra to_integer(unsigned(A)));
+			when LUI		=> resultado32 <= std_logic_vector(unsigned(B) sll 16);
+			when others => resultado32 <= (others => '0');
+		end case;			
 	end process;
 
 end architecture; 

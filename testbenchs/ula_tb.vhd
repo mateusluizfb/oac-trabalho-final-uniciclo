@@ -37,7 +37,6 @@ ARCHITECTURE ula_arch OF ula_tb IS
 	-- signals                                                   
 	SIGNAL A 					: STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL B 					: STD_LOGIC_VECTOR(31 DOWNTO 0);
-	SIGNAL ula_control_op 	: STD_LOGIC_VECTOR(1 downto 0) := "10";
 	SIGNAL ula_op 				: ula_operation;
 	SIGNAL ula_out 			: STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL zero 				: std_logic;
@@ -47,7 +46,6 @@ ARCHITECTURE ula_arch OF ula_tb IS
 		PORT (
 			A 					: IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 			B 					: IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			ula_control_op : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
 			ula_op 			: IN ula_operation;
 			ula_out 			: OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 			zero				: OUT STD_LOGIC;
@@ -60,7 +58,6 @@ ARCHITECTURE ula_arch OF ula_tb IS
 	-- list connections between master ports and signals
 			A 					=> A,
 			B 					=> B,
-			ula_control_op 	=> ula_control_op,
 			ula_op 			=> ula_op,
 			ula_out 			=> ula_out,
 			zero 				=> zero,
@@ -299,23 +296,6 @@ ARCHITECTURE ula_arch OF ula_tb IS
 		ula_op <= LUI;
 		wait for 10 ns;
 		assert (ula_out = x"FFFF0000");
-		
-		-- Test ula op 00
-		
-		ula_control_op <= "00";
-		A <= std_LOGIC_VECTOR(to_signed(5, 32));
-		B <= std_LOGIC_VECTOR(to_signed(15, 32));
-		wait for 10 ns;
-		assert (ula_out = std_LOGIC_VECTOR(to_signed(20, 32))); -- Tem que somar
-		
-		-- Test ula op 01
-
-		ula_control_op <= "01";
-		A <= std_LOGIC_VECTOR(to_signed(5, 32));
-		B <= std_LOGIC_VECTOR(to_signed(15, 32));
-		wait for 10 ns;
-		assert (ula_out = std_LOGIC_VECTOR(to_signed(-10, 32))); -- Tem que subtrair
-
 
 	WAIT;                                                       
 END PROCESS init;                                                                                   
