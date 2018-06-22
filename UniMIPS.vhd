@@ -8,6 +8,10 @@ entity UniMIPS is
     write_data                      : in std_logic_vector(31 downto 0);
     r1_out                          : out std_logic_vector(31 downto 0);
     r2_out                          : out std_logic_vector(31 downto 0);
+    r1_read                         : out std_logic_vector(4 downto 0);
+    r2_read                         : out std_logic_vector(4 downto 0);
+    reg_input_write                 : in std_logic_vector(4 downto 0);
+    wren_breg                       : in std_logic;
     -- sinais de controle
     mux_sin                         : in std_logic;
     mux_reg_dst                     : in std_logic;
@@ -22,7 +26,7 @@ end entity ; -- UniMIPS
 architecture arch of UniMIPS is
 
 -- sinais de controle do breg
-signal wren_breg: std_logic;
+--signal wren_breg: std_logic;
 signal reset_breg: std_logic;
 
 -- sinal de saida da memoria e entrada do breg
@@ -63,6 +67,8 @@ end component;
 begin
 
     instruction_out <= instruction;
+    r1_read <= instruction(25 downto 21);
+    r2_read <= instruction(20 downto 16);
     -- instacia  a memoria de instruções
     inst_mem_i1: MemMIPS
     port map (
@@ -88,12 +94,13 @@ begin
         register_output_2 => r2_out
     );
 
+    -- instacia o mux que seleciona o registrador a ser escrito
     mux_reg_dst_i1: mux
     generic map (WSIZE => 5)
     port map (
         sel => mux_reg_dst,
         input0 => instruction(20 downto 16),
-        input1 => instruction(15 downto 11),
+        input1 => reg_input_write,
         output1 => reg_dst_out
     );
 
