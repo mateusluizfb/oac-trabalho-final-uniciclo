@@ -11,16 +11,11 @@ end entity;
 
 architecture signal_extension_arch of signal_extension is
 begin
-
+	
 	init: process (input)
 	begin
-		for i in 0 to 15 loop
-			output(i) <= input(i);
-		end loop;
-		
-		for j in 16 to 31 loop
-			output(j) <= input(15);
-		end loop;
+		output(15 downto 0)  <= input(15 downto 0);
+		output(31 downto 16) <= (others => input(15));
 	end process;
 
 end architecture;
