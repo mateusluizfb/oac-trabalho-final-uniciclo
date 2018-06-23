@@ -6,12 +6,12 @@ use work.ula_package.all;
 
 entity ula is
 	port (
-		A: 		 in std_logic_vector(31 downto 0);
-		B: 		 in std_logic_vector(31 downto 0);
-		ULA_OP: 	 in ULA_OPERATION;
-		ula_out:  out std_logic_vector(31 downto 0);
-		zero: 	 out std_logic;
-		overflow: out std_logic
+		A: 		 			in std_logic_vector(31 downto 0);
+		B: 		 			in std_logic_vector(31 downto 0);
+		ula_op: 	 			in ULA_OPERATION;
+		ula_out:  			out std_logic_vector(31 downto 0);
+		zero: 	 			out std_logic;
+		overflow: 			out std_logic
 	);
 end entity;
 
@@ -35,7 +35,6 @@ begin
 			overflow <= '0';
 		end if;
 		
-		
 		case ULA_OP	is
 			when ADD    => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
 			when ADDU   => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
@@ -52,8 +51,9 @@ begin
 			when RTL		=> resultado32 <= std_logic_vector(unsigned(B) rol to_integer(unsigned(A)));
 			when RTR		=> resultado32 <= std_logic_vector(unsigned(B) ror to_integer(unsigned(A)));
 			when SRA_OP	=> resultado32 <= to_stdlogicvector(to_bitvector(B) sra to_integer(unsigned(A)));
+			when LUI		=> resultado32 <= std_logic_vector(unsigned(B) sll 16);
 			when others => resultado32 <= (others => '0');
-		end case;
+		end case;			
 	end process;
 
 end architecture; 
