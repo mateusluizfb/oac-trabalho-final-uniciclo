@@ -5,7 +5,7 @@ library ieee ;
 entity UniMIPS_tb is
 end UniMIPS_tb;
 architecture UniMIPS_arch of UniMIPS_tb is
-signal clk : std_logic;
+signal clk : std_logic := '0';
 signal clk0 : std_logic;
 signal mux_reg_dst : std_logic;
 signal mux_sin : std_logic;
@@ -19,6 +19,10 @@ signal reg_input_write : std_logic_vector(4 downto 0);
 signal wren_breg : std_logic;
 signal wpc : std_logic;
 signal write_data : std_logic_vector(31 downto 0);
+
+constant CLK_PERIOD : time := 100 ps;
+constant CLK0_PERIOD : time := 10 ps;
+
 component UniMIPS
     port (
     clk : in std_logic;
@@ -56,6 +60,23 @@ begin
     wpc => wpc,
     write_data => write_data
     );
+
+
+Clk_process :process
+begin
+    clk <= '0';
+    wait for CLK_PERIOD/2;  --for half of clock period clk stays at '0'.
+    clk <= '1';
+    wait for CLK_PERIOD/2;  --for next half of clock period clk stays at '1'.
+end process;
+
+Clk0_process :process
+begin
+    clk0 <= '0';
+    wait for CLK0_PERIOD/2;  --for half of clock period clk stays at '0'.
+    clk0 <= '1';
+    wait for CLK0_PERIOD/2;  --for next half of clock period clk stays at '1'.
+end process;
 
 init : process
 begin
@@ -191,8 +212,8 @@ begin
      -- 31
     reg_input_write <= (std_logic_vector(to_unsigned(31, 5)));
     write_data <=  (std_logic_vector(to_unsigned(31, 32)));
-
     wait for 100 ps;
+
     wren_breg <= '0';
     wpc <= '1';
     wait for 100 ps;
