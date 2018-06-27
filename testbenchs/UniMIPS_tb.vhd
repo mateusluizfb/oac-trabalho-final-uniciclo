@@ -218,7 +218,86 @@ begin
     wpc <= '1';
     wait for 100 ps;
     mux_sin <= '0';
+    assert (inst_counter = X"00000000") report "Breg read failure" severity failure;
+    assert (instruction_out = X"20082000") report "Breg read failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(0, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(0, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(8, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(8, 5))) report "Breg read failure" severity failure;
     wait for 100 ps;
+
+    assert (inst_counter = X"00000004") report "Instruction pc failure" severity failure;
+    assert (instruction_out = X"8d090000") report "Instruction failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(8, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(8, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(9, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(9, 5))) report "Breg read failure" severity failure;
+    wait for 100 ps;
+
+    assert (inst_counter = X"00000008") report "Instruction pc failure" severity failure;
+    assert (instruction_out = X"8d0a0004") report "Instruction failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(8, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(8, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(10, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(10, 5))) report "Breg read failure" severity failure;
+    wait for 100 ps;
+
+    assert (inst_counter = X"0000000C") report "Instruction pc failure" severity failure;
+    assert (instruction_out = X"8d0b0008") report "Instruction failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(8, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(8, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(11, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(11, 5))) report "Breg read failure" severity failure;
+    wait for 100 ps;
+
+    assert (inst_counter = X"00000010") report "Instruction pc failure" severity failure;
+    assert (instruction_out = X"8d0c000c") report "Instruction failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(8, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(8, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(12, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(12, 5))) report "Breg read failure" severity failure;
+    wait for 100 ps;
+
+    assert (inst_counter = X"00000014") report "Instruction pc failure" severity failure;
+    assert (instruction_out = X"8d0d0010") report "Instruction failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(8, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(8, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(13, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(13, 5))) report "Breg read failure" severity failure;
+    wait for 100 ps;
+
+    assert (inst_counter = X"00000018") report "Instruction pc failure" severity failure;
+    assert (instruction_out = X"01498020") report "Instruction failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(10, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(10, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(9, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(9, 5))) report "Breg read failure" severity failure;
+    wait for 100 ps;
+
+    assert (inst_counter = X"0000001C") report "Instruction pc failure" severity failure;
+    assert (instruction_out = X"01498822") report "Instruction failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(10, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(10, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(9, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(9, 5))) report "Breg read failure" severity failure;
+    wait for 100 ps;
+
+    assert (inst_counter = X"00000020") report "Instruction pc failure" severity failure;
+    assert (instruction_out = X"018d9024") report "Instruction failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(12, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(12, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(13, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(13, 5))) report "Breg read failure" severity failure;
+    wait for 100 ps;
+
+    assert (inst_counter = X"00000024") report "Instruction pc failure" severity failure;
+    assert (instruction_out = X"012b982a") report "Instruction failure" severity failure;
+    assert (r1_out = std_logic_vector(to_unsigned(9, 32))) report "Breg read failure" severity failure;
+    assert (r1_read = std_logic_vector(to_unsigned(9, 5))) report "Breg read failure" severity failure;
+    assert (r2_out = std_logic_vector(to_unsigned(11, 32))) report "Breg read failure" severity failure;
+    assert (r2_read = std_logic_vector(to_unsigned(11, 5))) report "Breg read failure" severity failure;
+    wait for 100 ps;
+
     wait;
 end process init; -- init
 end architecture ; -- arch
