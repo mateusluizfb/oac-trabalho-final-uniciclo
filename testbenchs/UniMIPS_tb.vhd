@@ -218,6 +218,7 @@ begin
     wpc <= '1';
     wait for 100 ps;
     mux_sin <= '0';
+<<<<<<< HEAD
     assert (inst_counter = X"00000000") report "Breg read failure" severity failure;
     assert (instruction_out = X"20082000") report "Breg read failure" severity failure;
     assert (r1_out = std_logic_vector(to_unsigned(0, 32))) report "Breg read failure" severity failure;
