@@ -17,6 +17,7 @@ entity UniMIPS is
     mux_sin                         : in std_logic;
     mux_reg_dst                     : in std_logic;
     wpc                             : in std_logic;
+    ula_sel                         : in std_logic;
     ula_op                          : in ULA_OPERATION;
     --*sinais de controle
     -- sinal de entrada breg
@@ -38,7 +39,8 @@ signal reset_breg: std_logic;
 signal instruction: std_logic_vector(31 downto 0);
 -- sinal de 
 signal reg_dst_out: std_logic_vector(4 downto 0);
-signal r1, r2: std_logic_vector(31 downto 0);
+signal r1, r2, ula_dst: std_logic_vector(31 downto 0);
+signal immediate: std_logic_vector(31 downto 0);
 
 component MemMIPS
     port (
@@ -61,12 +63,12 @@ component breg
 end component;
 
 component mux
-    generic (WSIZE : natural := 5);
+    generic (WSIZE : natural := 32);
     port (
     sel                             : in std_logic;
-    input0                          : in std_logic_vector(4 downto 0);
-    input1                          : in std_logic_vector(4 downto 0);
-    output1                         : out std_logic_vector(4 downto 0)
+    input0                          : in std_logic_vector(WSIZE-1 downto 0);
+    input1                          : in std_logic_vector(WSIZE-1 downto 0);
+    output1                         : out std_logic_vector(WSIZE-1 downto 0)
   );
 end component;
 
@@ -78,6 +80,13 @@ component ula
         ula_out                     : out std_logic_vector(31 downto 0);
         zero                        : out std_logic;
         overflow                    : out std_logic
+    );
+end component;
+
+component signal_extension
+    port (
+        input                       : in  std_logic_vector(15 downto 0);
+        output                      : out std_logic_vector(31 downto 0)
     );
 end component;
 
@@ -126,11 +135,26 @@ begin
     ula_i1: ula
     port map (
         A => r1,
-        B => r2,
+        B => ula_dst,
         ula_op => ula_op,
         ula_out => Z,
         zero => zero,
         overflow => ovfl
+    );
+
+    mux_ula_i1: mux
+    generic map (WSIZE => 32)
+    port map (
+        sel => ula_sel,
+        input0 => r2,
+        input1 => immediate,
+        output1 => ula_dst
+    );
+
+    sign_ext_i1: signal_extension
+    port map (
+        input => instruction(15 downto 0),
+        output => immediate
     );
 
 end architecture ; -- arch
