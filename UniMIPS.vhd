@@ -128,6 +128,7 @@ begin
     port map (
         sel => mux_reg_dst,
         input0 => instruction(20 downto 16),
+        --input1 => instruction(15 downto 11),
         input1 => reg_input_write,
         output1 => reg_dst_out
     );
