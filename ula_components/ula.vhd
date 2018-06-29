@@ -24,21 +24,13 @@ begin
     tmp <= std_logic_vector(signed(A) - signed(B));
     init: process (A, B, ULA_OP, resultado32, tmp, overflow_temp)
     begin
+        overflow <= '0';
         if (resultado32 = X"00000000") then zero <= '1'; else zero <= '0'; end if;
-        if (ULA_OP = ADD) then
-            overflow_temp <= ((A xnor B) and (A xor resultado32));
-            overflow        <= overflow_temp(0);
-        elsif (ULA_OP = SUB) then
-            overflow_temp <= ((A xnor not(B)) and (A xor resultado32));
-            overflow        <= overflow_temp(0);
-        else
-            overflow <= '0';
-        end if;
         
         case ULA_OP is
-            when ADD    => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
+            when ADD    => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B)); overflow <= (A(31) xnor B(31)) and (A(31) xor resultado32(31));
             when ADDU   => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
-            when SUB        => resultado32 <= tmp;
+            when SUB        => resultado32 <= tmp; overflow <=  (B(31) and resultado32(31));
             when SUBU   => resultado32 <= tmp;
             when AND_OP => resultado32 <= A and B;
             when OR_OP  =>  resultado32 <= A or B;
