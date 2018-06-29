@@ -79,3 +79,4 @@ set_global_assignment -name VHDL_FILE pc.vhd
 set_global_assignment -name VHDL_FILE MemMIPS.vhd
 set_global_assignment -name VHDL_FILE breg.vhd
 set_global_assignment -name VHDL_FILE mux.vhd
+set_global_assignment -name VHDL_FILE controle.vhd
