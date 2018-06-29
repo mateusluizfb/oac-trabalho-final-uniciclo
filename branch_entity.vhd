@@ -88,7 +88,7 @@ architecture behaviour of jump_entity is
 				sel		=>	jump,
 				input0	=>	mux1_out,
 				input1	=>	mux2_in,
-				output	=> branch_out
+				branch_out	=> branch_out
 			);
 		
 end architecture behaviour;
