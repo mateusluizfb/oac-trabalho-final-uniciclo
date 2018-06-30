@@ -47,6 +47,7 @@ end component;
 component somador_pc
     port (
     input1: in std_logic_vector(31 downto 0);
+	 input2: in std_logic_vector(31 downto 0);
     output1: out std_logic_vector(31 downto 0)
   );
 end component;
@@ -81,6 +82,7 @@ begin
     somador_pc_i1: somador_pc
     port map (
         input1 => pc_out,
+		  input2 => sin4,
         output1 => jump_address
     );
 
