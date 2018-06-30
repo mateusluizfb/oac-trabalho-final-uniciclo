@@ -123,11 +123,15 @@ begin
     assert (Z = std_logic_vector(signed(r1_out) + X"00002000")) report "add failure" severity failure;
     wait for 100 ps;
     ula_sel <= '0';
+    wait for 40 ps;
     -- sub
-    wait for 100 ps;
     ula_op <= SUB;
-    assert (Z = std_logic_vector(signed(r1_out) + signed(r2_out))) report "add failure" severity failure;
     wait for 100 ps;
+    assert (Z = std_logic_vector(signed(r1_out) - signed(r2_out))) report "sub failure" severity failure;
+    wait for 100 ps;
+    ula_op <= AND_OP;
+    wait for 100 ps;
+    assert (Z = std_logic_vector(signed(r1_out) and signed(r2_out))) report "and failure" severity failure;
 wait;
 end process ; -- init
 end architecture ; -- arch
