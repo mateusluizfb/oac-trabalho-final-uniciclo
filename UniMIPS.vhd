@@ -6,7 +6,7 @@ library ieee ;
 entity UniMIPS is
     port (
     clk, clk0                       : in std_logic;
-    write_data                      : in std_logic_vector(31 downto 0);
+    --write_data                      : in std_logic_vector(31 downto 0);
     md_data                         : in std_logic_vector(31 downto 0);
     r1_out                          : out std_logic_vector(31 downto 0);
     r2_out                          : out std_logic_vector(31 downto 0);
@@ -14,6 +14,7 @@ entity UniMIPS is
     r2_read                         : out std_logic_vector(4 downto 0);
     reg_input_write                 : in std_logic_vector(4 downto 0);
     -- sinais de controle
+    wb_sin                          : in std_logic;
     wren_breg                       : in std_logic;
     mux_sin                         : in std_logic;
     mux_reg_dst                     : in std_logic;
@@ -27,7 +28,7 @@ entity UniMIPS is
     ovfl                            : out std_logic;
     instruction_out                 : out std_logic_vector(31 downto 0);
     inst_counter                    : out std_logic_vector(31 downto 0);
-    Z                               : out std_logic_vector(31 downto 0);
+    alu_out                         : out std_logic_vector(31 downto 0);
     md_out                          : out std_logic_vector(31 downto 0)
     );
 end entity ; -- UniMIPS
@@ -45,6 +46,9 @@ signal reg_dst_out: std_logic_vector(4 downto 0);
 signal r1, r2, ula_dst: std_logic_vector(31 downto 0);
 signal immediate: std_logic_vector(31 downto 0);
 signal md_address: std_logic_vector(7 downto 0);
+signal write_data_breg: std_logic_vector(31 downto 0);
+signal md_read_data: std_logic_vector(31 downto 0);
+signal Z: std_logic_vector(31 downto 0);
 
 component MemMIPS
     port (
@@ -111,6 +115,8 @@ begin
     r2_read <= instruction(20 downto 16);
     r1_out <= r1;
     r2_out <= r2;
+    md_out <=  md_read_data;
+    alu_out <= Z;
     -- instacia  a memoria de instruções
     inst_mem_i1: MemMIPS
     port map (
@@ -131,7 +137,7 @@ begin
         register_input_1 => instruction(25 downto 21),
         register_input_2 => instruction(20 downto 16),
         register_write   => reg_dst_out,
-        write_data => write_data,
+        write_data => write_data_breg,
         register_output_1 => r1,
         register_output_2 => r2
     );
@@ -174,11 +180,20 @@ begin
 
     data_memory_i1: mem_dados
     port map (
-        address <= md_address;
-        clock <= clk;
-        data <= md_data;
-        wren <= wren_md; 
-        q <= md_out
-    )
+        address => md_address,
+        clock => clk,
+        data => md_data,
+        wren => wren_md, 
+        q => md_read_data
+    );
+
+    mux_md_i1: mux
+    generic map (WSIZE => 32)
+    port map (
+        sel => wb_sin,
+        input0 => md_read_data,
+        input1 => Z,
+        output1 => write_data_breg 
+    );
 
 end architecture ; -- arch
