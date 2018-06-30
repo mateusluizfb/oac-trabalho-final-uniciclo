@@ -11,7 +11,8 @@ entity branch_entity is
 	);
 end entity branch_entity;
 
-architecture behaviour of jump_entity is
+architecture branch_entity_arch of branch_entity is
+	
 	component somador
 		port (
 			input1, input2	: in std_logic_vector(31 downto 0);
@@ -88,8 +89,8 @@ architecture behaviour of jump_entity is
 				sel		=>	jump,
 				input0	=>	mux1_out,
 				input1	=>	mux2_in,
-				branch_out	=> branch_out
+				output1	=> branch_out
 			);
 		
-end architecture behaviour;
+end architecture branch_entity_arch;
 	

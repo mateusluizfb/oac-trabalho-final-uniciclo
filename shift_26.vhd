@@ -10,7 +10,7 @@ entity shift_26 is
 end entity shift_26;
 
 architecture behaviour of shift_26 is
-signal aux	:	std_logic_vector(27 downto 0) := "00" & shift_26_input; -- Converte de um bundle de 26 para 28 bits
+	signal aux	:	std_logic_vector(27 downto 0) := "00" & shift_26_input; -- Converte de um bundle de 26 para 28 bits
 begin
 	shift_26_output <= std_logic_vector(shift_left(unsigned(aux), 2));
 end behaviour;
