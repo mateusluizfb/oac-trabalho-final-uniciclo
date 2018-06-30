@@ -7,25 +7,28 @@ entity UniMIPS is
     port (
     clk, clk0                       : in std_logic;
     write_data                      : in std_logic_vector(31 downto 0);
+    md_data                         : in std_logic_vector(31 downto 0);
     r1_out                          : out std_logic_vector(31 downto 0);
     r2_out                          : out std_logic_vector(31 downto 0);
     r1_read                         : out std_logic_vector(4 downto 0);
     r2_read                         : out std_logic_vector(4 downto 0);
     reg_input_write                 : in std_logic_vector(4 downto 0);
-    wren_breg                       : in std_logic;
     -- sinais de controle
+    wren_breg                       : in std_logic;
     mux_sin                         : in std_logic;
     mux_reg_dst                     : in std_logic;
     wpc                             : in std_logic;
     ula_sel                         : in std_logic;
     ula_op                          : in ULA_OPERATION;
+    wren_md                         : in std_logic;
     --*sinais de controle
     -- sinal de entrada breg
     zero                            : out std_logic;
     ovfl                            : out std_logic;
     instruction_out                 : out std_logic_vector(31 downto 0);
     inst_counter                    : out std_logic_vector(31 downto 0);
-    Z                               : out std_logic_vector(31 downto 0)
+    Z                               : out std_logic_vector(31 downto 0);
+    md_out                          : out std_logic_vector(31 downto 0)
     );
 end entity ; -- UniMIPS
 
@@ -41,6 +44,7 @@ signal instruction: std_logic_vector(31 downto 0);
 signal reg_dst_out: std_logic_vector(4 downto 0);
 signal r1, r2, ula_dst: std_logic_vector(31 downto 0);
 signal immediate: std_logic_vector(31 downto 0);
+signal md_address: std_logic_vector(7 downto 0);
 
 component MemMIPS
     port (
@@ -87,6 +91,16 @@ component signal_extension
     port (
         input                       : in  std_logic_vector(15 downto 0);
         output                      : out std_logic_vector(31 downto 0)
+    );
+end component;
+
+component mem_dados
+    port (
+        address                     : in std_logic_vector(7 downto 0);
+        clock                       : in std_logic;
+        data                        : in std_logic_vector(31 downto 0);
+        wren                        : in std_logic;
+        q                           : out std_logic_vector(31 downto 0)
     );
 end component;
 
@@ -157,5 +171,14 @@ begin
         input => instruction(15 downto 0),
         output => immediate
     );
+
+    data_memory_i1: mem_dados
+    port map (
+        address <= md_address;
+        clock <= clk;
+        data <= md_data;
+        wren <= wren_md; 
+        q <= md_out
+    )
 
 end architecture ; -- arch

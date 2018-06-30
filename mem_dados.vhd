@@ -46,7 +46,7 @@ ENTITY mem_dados IS
         clock       : IN STD_LOGIC  := '1';
         data        : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
         wren        : IN STD_LOGIC ;
-        q       : OUT STD_LOGIC_VECTOR (31 DOWNTO 0)
+        q           : OUT STD_LOGIC_VECTOR (31 DOWNTO 0)
     );
 END mem_dados;
 
