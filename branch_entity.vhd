@@ -55,7 +55,7 @@ architecture branch_entity_arch of branch_entity is
 	begin
 		
 		mux1_sel <= branch and zero;
-		mux2_in	<=	std_logic_vector(pc_value(31 downto 28) & shift26_out);
+		mux2_in	<=	pc_value(31 downto 28) & shift26_out;
 		
 		shift32_i1: shift_32
 			port map (

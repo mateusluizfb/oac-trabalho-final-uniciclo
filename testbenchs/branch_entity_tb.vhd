@@ -66,12 +66,36 @@ init : PROCESS
 -- variable declarations                                     
 BEGIN                                                        
         -- code that executes only once 
-	branch 	<= '0';
-	zero 	 	<= '0';
-	jump 	 	<= '0';
-	pc_value <= x"0000CFA0";
+		  
+	-- Passa o valor do pc direto pra saída
+	branch 	  <= '0';
+	zero 	 	  <= '0';
+	jump 	 	  <= '0';
+	shift26_in <= "00" & x"000000";
+	shift32_in <= x"00000000";
+	pc_value   <= x"0000CFA0";
 	wait for 10 ns;
 	assert ( branch_out = x"0000CFA0");
+	
+	-- soma o imediato shiftado << 2 e soma com o PC
+	branch 	  <= '1';
+	zero 	 	  <= '1';
+	jump 	 	  <= '0';
+	shift26_in <= "00" & x"000000";
+	shift32_in <= x"0000000C";
+	pc_value   <= x"0000CFA0";
+	wait for 10 ns;
+	assert ( branch_out = x"0000CFD0");
+
+	-- jump
+	branch 	  <= '0';
+	zero 	 	  <= '0';
+	jump 	 	  <= '1';
+	shift26_in <= "00" & x"000C0C";
+	shift32_in <= x"00000000";
+	pc_value   <= x"E000CFA0";
+	wait for 10 ns;
+	assert (branch_out = x"E0003030");
 	
 WAIT;                                                       
 END PROCESS init;                                    
