@@ -60,8 +60,8 @@ architecture controleULA_arch of controleULA is
 						ulasin <= "1110";
 					when "111101" => -- lui(?)
 						ulasin <= "1111";
-					when others	  => -- comportamento padrão: soma
-						ulasin <= "0000";
+					when others	  => -- operacao nao implementada na ula
+						ulasin <= "----";
 				end case;
 			elsif aluop = "001" then    -- addi, lw, sw
 				ulasin <= "0000";
