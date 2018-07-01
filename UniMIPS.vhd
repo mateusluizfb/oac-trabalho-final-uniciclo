@@ -7,12 +7,12 @@ entity UniMIPS is
     port (
     clk, clk0                       : in std_logic;
     --write_data                      : in std_logic_vector(31 downto 0);
-    md_data                         : in std_logic_vector(31 downto 0);
+    --md_data                         : in std_logic_vector(31 downto 0);
     r1_out                          : out std_logic_vector(31 downto 0);
     r2_out                          : out std_logic_vector(31 downto 0);
     r1_read                         : out std_logic_vector(4 downto 0);
     r2_read                         : out std_logic_vector(4 downto 0);
-    reg_input_write                 : in std_logic_vector(4 downto 0);
+    --reg_input_write                 : in std_logic_vector(4 downto 0);
     -- sinais de controle
     wb_sin                          : in std_logic;
     wren_breg                       : in std_logic;
@@ -37,7 +37,7 @@ architecture arch of UniMIPS is
 
 -- sinais de controle do breg
 --signal wren_breg: std_logic;
-signal reset_breg: std_logic;
+signal reset_breg: std_logic := '0';
 
 -- sinal de saida da memoria e entrada do breg
 signal instruction: std_logic_vector(31 downto 0);
@@ -148,8 +148,8 @@ begin
     port map (
         sel => mux_reg_dst,
         input0 => instruction(20 downto 16),
-        --input1 => instruction(15 downto 11),
-        input1 => reg_input_write,
+        input1 => instruction(15 downto 11),
+        --input1 => reg_input_write,
         output1 => reg_dst_out
     );
 
@@ -180,9 +180,9 @@ begin
 
     data_memory_i1: mem_dados
     port map (
-        address => md_address,
-        clock => clk,
-        data => md_data,
+        address => Z(9 downto 2),
+        clock => clk0,
+        data => r2,
         wren => wren_md, 
         q => md_read_data
     );
@@ -191,8 +191,8 @@ begin
     generic map (WSIZE => 32)
     port map (
         sel => wb_sin,
-        input0 => md_read_data,
-        input1 => Z,
+        input0 => Z,
+        input1 => md_read_data,
         output1 => write_data_breg 
     );
 
