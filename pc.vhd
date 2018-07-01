@@ -11,7 +11,7 @@ entity pc is
 end entity ; -- pc
 
 architecture arch of pc is
-signal o1 : std_logic_vector(31 downto 0);
+signal o1 : std_logic_vector(31 downto 0) := x"00000000";
 begin
     out1 <= o1;
     pc_process : process( in1, clk, wpc )
