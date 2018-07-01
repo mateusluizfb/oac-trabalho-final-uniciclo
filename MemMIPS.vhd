@@ -63,4 +63,12 @@ begin
     );
 
     out_pc <= pc_out;
+
+sum_4 : process(clk,clk0)
+begin
+    sin4 <= X"00000004";
+    init_address <= X"00000000";
+    data <= X"00000000";
+    wren <= '0';
+end process ; -- sum_4
 end architecture ; -- arch
