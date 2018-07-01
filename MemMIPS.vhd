@@ -18,13 +18,13 @@ architecture arch of MemMIPS is
 --signal wpc : std_logic;
 signal sin4: std_logic_vector(31 downto 0) := X"00000004";
 
-signal init_address: std_logic_vector(31 downto 0);
+signal init_address: std_logic_vector(31 downto 0) := X"00000000";
 signal jump_address: std_logic_vector(31 downto 0);
 signal mux_i1_out: std_logic_vector(31 downto 0);
 signal pc_out: std_logic_vector(31 downto 0);
-signal data : std_logic_vector(31 downto 0);
+signal data : std_logic_vector(31 downto 0) := X"00000000";
 signal q : std_logic_vector(31 downto 0);
-signal wren : std_logic;
+signal wren : std_logic := '0';
 
 component mux
     port (
@@ -47,6 +47,7 @@ end component;
 component somador_pc
     port (
     input1: in std_logic_vector(31 downto 0);
+	 input2: in std_logic_vector(31 downto 0);
     output1: out std_logic_vector(31 downto 0)
   );
 end component;
@@ -81,6 +82,7 @@ begin
     somador_pc_i1: somador_pc
     port map (
         input1 => pc_out,
+		  input2 => sin4,
         output1 => jump_address
     );
 
@@ -94,11 +96,5 @@ begin
       wren => wren
     );
 
-init : process (clk,pc_out)
-begin
-    wren <= '0';
-    init_address <= X"00000000";
-    data <= X"00000000";
     out_pc <= pc_out;
-end process ; -- init
 end architecture ; -- arch
