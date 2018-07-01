@@ -34,16 +34,16 @@ ARCHITECTURE MemMIPS_arch OF MemMIPS_tb IS
 -- signals                                                   
 SIGNAL clk : STD_LOGIC;
 signal clk0: std_logic;
-SIGNAL m1_sin : STD_LOGIC;
 SIGNAL wpc : STD_LOGIC;
 signal out_pc: std_logic_vector(31 downto 0);
+signal pc_in: std_logic_vector(31 downto 0);
 signal instruction: std_logic_vector(31 downto 0);
 COMPONENT MemMIPS
     PORT (
     clk : IN STD_LOGIC;
     clk0: in std_logic;
-    m1_sin : IN STD_LOGIC;
     wpc : IN STD_LOGIC;
+	 pc_in: in std_logic_vector(31 downto 0);
     instruction: out std_logic_vector(31 downto 0);
     out_pc: out std_logic_vector(31 downto 0)
     );
@@ -54,8 +54,8 @@ BEGIN
 -- list connections between master ports and signals
     clk => clk,
     clk0 => clk0,
-    m1_sin => m1_sin,
     wpc => wpc,
+	 pc_in => pc_in,
     instruction => instruction,
     out_pc => out_pc
     );
@@ -63,10 +63,7 @@ init : PROCESS
 -- variable declarations                                     
 BEGIN                                                        
         -- code that executes only once                      
-        m1_sin <= '1';
         wpc <= '1';
-        wait for 100 ps;
-        m1_sin <= '0';
         wait for 100 ps;
         wait;
 END PROCESS init;                                                                           

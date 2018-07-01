@@ -1,10 +1,12 @@
 library ieee;
 use ieee.std_logic_1164.all;
+ use ieee.numeric_std.all ;
+
 
 entity branch_entity is
 	port(
-		pc_value					:	in std_logic_vector(31 downto 0); -- Sinais de entrada do somador
-		branch, zero, jump	:	in std_logic;							 -- Sinais enviados pelo controle
+		pc_value					:	in std_logic_vector(31 downto 0); -- Sinais de entrada do pc
+		branch, zero, jump	:	in std_logic := '0';							 -- Sinais enviados pelo controle
 		shift26_in				: 	in std_logic_vector(25 downto 0);
 		shift32_in				:	in std_logic_vector(31 downto 0);
 		branch_out				:	out std_logic_vector(31 downto 0)
@@ -51,11 +53,22 @@ architecture branch_entity_arch of branch_entity is
 	signal mux_branch_out:	std_logic_vector(31 downto 0);
 	signal mux1_sel		:	std_logic;
 	signal mux2_in			:	std_logic_vector(31 downto 0);
+	signal pc_4_out	:  std_logic_vector(31 downto 0);
+	signal pc_4	         :  std_logic_vector(31 downto 0);
+
 	
 	begin
 		
 		mux1_sel <= branch and zero;
-		mux2_in	<=	pc_value(31 downto 28) & shift26_out;
+		mux2_in	<=	pc_4_out(31 downto 28) & shift26_out;		
+		pc_4 <= std_logic_vector(to_unsigned(4, 32));
+
+		somador_pc_4_i2: somador
+			port map (
+				input1 	=>  pc_value,
+				input2	=>	 pc_4,
+				output1  =>	 pc_4_out
+			);
 		
 		shift32_i1: shift_32
 			port map (
@@ -71,7 +84,7 @@ architecture branch_entity_arch of branch_entity is
 		
 		somador_i1: somador
 			port map (
-				input1 	=>  pc_value,
+				input1 	=>  pc_4_out,
 				input2	=>	 shift32_out,
 				output1  =>	 somador_out
 			);
@@ -79,7 +92,7 @@ architecture branch_entity_arch of branch_entity is
 		mux_i1: mux
 			port map (
 				sel		=>	mux1_sel,
-				input0	=>	pc_value,
+				input0	=>	pc_4_out,
 				input1	=> somador_out,
 				output1	=> mux1_out
 			);
