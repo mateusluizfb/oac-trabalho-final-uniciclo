@@ -44,10 +44,10 @@ component pc
   );
 end component;
 
-component somador_pc
+component somador
     port (
     input1: in std_logic_vector(31 downto 0);
-	 input2: in std_logic_vector(31 downto 0);
+	input2: in std_logic_vector(31 downto 0);
     output1: out std_logic_vector(31 downto 0)
   );
 end component;
@@ -79,10 +79,10 @@ begin
         out1 => pc_out
     );
 
-    somador_pc_i1: somador_pc
+    somador_pc_i1: somador
     port map (
         input1 => pc_out,
-		  input2 => sin4,
+		input2 => sin4,
         output1 => jump_address
     );
 
@@ -97,4 +97,12 @@ begin
     );
 
     out_pc <= pc_out;
+
+sum_4 : process(clk,clk0)
+begin
+    sin4 <= X"00000004";
+    init_address <= X"00000000";
+    data <= X"00000000";
+    wren <= '0';
+end process ; -- sum_4
 end architecture ; -- arch
