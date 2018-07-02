@@ -128,10 +128,10 @@ BEGIN
 		wait for 4 ps;
 	-- Or
 		funct_in <= "100101";
-		val1_in <= X"10101010";
-		val2_in <= X"00001111";
+		val1_in <= X"F0F0F0F0";
+		val2_in <= X"0000FFFF";
 		wait for 4 ps;
-		assert(entity_out = X"10101111");
+		assert(entity_out = X"F0F0FFFF");
 
 		wait for 4 ps;
 
@@ -160,8 +160,8 @@ BEGIN
 
 		wait for 4 ps;
 		
-		val1_in <= std_logic_vector(to_unsigned(0, 32));
-		val2_in <= std_logic_vector(to_signed(-1, 32));
+		val1_in <= X"00000001";
+		val2_in <= X"80000000";
 		wait for 4 ps;
 		assert(entity_out = X"00000001");
 
@@ -169,18 +169,18 @@ BEGIN
 	
 	-- Nor
 		funct_in <= "100111";
-		val1_in <= X"10101010";
-		val2_in <= X"00001111";
+		val1_in <= X"F0F0F0F0";
+		val2_in <= X"0000FFFF";
 		wait for 4 ps;
-		assert(entity_out = X"01010000");
+		assert(entity_out = X"0F0F0000");
 
 		wait for 4 ps;
 	-- Xor	
 		funct_in <= "100110";
-		val1_in <= X"10101010";
-		val2_in <= X"00001111";
+		val1_in <= X"F0F0F0F0";
+		val2_in <= X"0000FFFF";
 		wait for 4 ps;
-		assert(entity_out = X"10100101");
+		assert(entity_out = X"F0F00F0F");
 
 		wait for 4 ps;
 	-- Sll
@@ -296,7 +296,7 @@ BEGIN
 		val1_in <= X"00000001";
 		val2_in <= X"00000001";
 		wait for 4 ps;
-		assert(entity_out = X"00000002");
+		assert(entity_out = X"00000000");
 		assert(zero_out = '1');
 		
 		wait for 4 ps;
