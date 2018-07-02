@@ -18,7 +18,7 @@ entity controleULA is
 	port (
 		aluop	:	in	std_logic_vector(2 downto 0);
 		funct	:	in 	std_logic_vector(5 downto 0);
-		ulasin	:	out std_logic_vector(3 downto 0) -- 4 bits: consultar ula_package para a instruÃ§Ã£o
+		ulasin	:	out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃ§Ã£o
 	);
 end entity;
 
@@ -29,54 +29,54 @@ architecture controleULA_arch of controleULA is
 			if aluop = "000" then	-- no caso de uma operação tipo r
 				case funct is
 					when "100000" => -- add
-						ulasin <= "0000";
+						ulasin <= ADD;
 					when "100001" => -- addu
-						ulasin <= "0001";
+						ulasin <= ADDU;
 					when "100010" => -- sub
-						ulasin <= "0010";
+						ulasin <= SUB;
 					when "100011" => -- subu
-						ulasin <= "0011";
+						ulasin <= SUBU;
 					when "100100" => -- and
-						ulasin <= "0100";
+						ulasin <= AND_OP;
 					when "100101" => -- or
-						ulasin <= "0101";
+						ulasin <= OR_OP;
 					when "101010" => -- slt
-						ulasin <= "0110";
+						ulasin <= SLT;
 					when "101011" => -- sltu
-						ulasin <= "0111";
+						ulasin <= SLTU;
 					when "100111" => -- nor
-						ulasin <= "1000";
+						ulasin <= NOR_OP;
 					when "100110" => -- xor
-						ulasin <= "1001";
+						ulasin <= XOR_OP;
 					when "000000" => -- sll
-						ulasin <= "1010";
+						ulasin <= SLL_OP;
 					when "000010" => -- srl
-						ulasin <= "1011";
+						ulasin <= SRL_OP;
 					when "000011" => -- sra
-						ulasin <= "1100";
+						ulasin <= SRA_OP;
 					when "111111" => -- rtl(?)
-						ulasin <= "1101";
+						ulasin <= RTL;
 					when "111110" => -- rtr(?)
-						ulasin <= "1110";
+						ulasin <= RTR;
 					when "111101" => -- lui(?)
-						ulasin <= "1111";
+						ulasin <= LUI;
 					when others	  => -- operacao nao implementada na ula
-						ulasin <= "----";
+						ulasin <= SLL_OP;
 				end case;
 			elsif aluop = "001" then    -- addi, lw, sw
-				ulasin <= "0000";
+				ulasin <= ADD;
 			elsif aluop = "010" then	-- addiu
-				ulasin <= "0001";
+				ulasin <= ADDU;
 			elsif aluop = "011" then	-- bne, beq
-				ulasin <= "0010";
+				ulasin <= SUB;
 			elsif aluop = "100" then	-- andi
-				ulasin <= "0100";
+				ulasin <= AND_OP;
 			elsif aluop = "101" then	-- ori
-				ulasin <= "0101";
+				ulasin <= OR_OP;
 			elsif aluop = "110" then	-- slti
-				ulasin <= "0110";
+				ulasin <= SLT;
 			elsif aluop = "111" then	-- lui
-				ulasin <= "1111";
+				ulasin <= LUI;
 			end if;
 		end process init;
 	end architecture;
