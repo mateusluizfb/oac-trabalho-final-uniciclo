@@ -24,7 +24,7 @@ end entity;
 
 architecture controleULA_arch of controleULA is
 	begin
-		init: process(aluop)
+		init: process(aluop, funct)
 		begin
 			if aluop = "000" then	-- no caso de uma operação tipo r
 				case funct is
