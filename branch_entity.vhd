@@ -1,6 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
- use ieee.numeric_std.all ;
+use ieee.numeric_std.all ;
 
 
 entity branch_entity is
@@ -16,7 +16,7 @@ entity branch_entity is
 end entity branch_entity;
 
 architecture branch_entity_arch of branch_entity is
-    
+
     component somador
         port (
             input1, input2  : in std_logic_vector(31 downto 0);
