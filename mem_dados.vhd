@@ -46,7 +46,7 @@ ENTITY mem_dados IS
         clock       : IN STD_LOGIC  := '1';
         data        : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
         wren        : IN STD_LOGIC ;
-        q       : OUT STD_LOGIC_VECTOR (31 DOWNTO 0)
+        q           : OUT STD_LOGIC_VECTOR (31 DOWNTO 0)
     );
 END mem_dados;
 
@@ -90,7 +90,7 @@ BEGIN
     GENERIC MAP (
         clock_enable_input_a => "BYPASS",
         clock_enable_output_a => "BYPASS",
-        init_file => "fib_data.hex",
+        init_file => "lab_data.hex",
         intended_device_family => "Cyclone II",
         lpm_hint => "ENABLE_RUNTIME_MOD=NO",
         lpm_type => "altsyncram",

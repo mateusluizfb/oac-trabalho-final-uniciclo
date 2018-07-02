@@ -67,7 +67,7 @@ init : PROCESS
 BEGIN                                                        
         -- code that executes only once 
 		  
-	-- Passa o valor do pc direto pra saída
+	-- Passa o valor do pc + 4 direto pra saída
 	branch 	  <= '0';
 	zero 	 	  <= '0';
 	jump 	 	  <= '0';
@@ -75,7 +75,7 @@ BEGIN
 	shift32_in <= x"00000000";
 	pc_value   <= x"0000CFA0";
 	wait for 10 ns;
-	assert ( branch_out = x"0000CFA0");
+	assert ( branch_out = x"0000CFA4");
 	
 	-- soma o imediato shiftado << 2 e soma com o PC
 	branch 	  <= '1';
@@ -85,7 +85,7 @@ BEGIN
 	shift32_in <= x"0000000C";
 	pc_value   <= x"0000CFA0";
 	wait for 10 ns;
-	assert ( branch_out = x"0000CFD0");
+	assert ( branch_out = x"0000CFD4");
 
 	-- jump
 	branch 	  <= '0';
