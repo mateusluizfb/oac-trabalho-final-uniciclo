@@ -5,8 +5,8 @@ use ieee.std_logic_1164.all;
 
 entity branch_entity is
 	port(
-		pc_value					:	in std_logic_vector(31 downto 0); -- Sinais de entrada do pc
-		branch, zero, jump	:	in std_logic := '0';							 -- Sinais enviados pelo controle
+		pc_value				:	in std_logic_vector(31 downto 0); -- Sinais de entrada do pc
+		beq, bne, zero, jump	:	in std_logic := '0';							 -- Sinais enviados pelo controle
 		shift26_in				: 	in std_logic_vector(25 downto 0);
 		shift32_in				:	in std_logic_vector(31 downto 0);
 		branch_out				:	out std_logic_vector(31 downto 0)
@@ -55,11 +55,10 @@ architecture branch_entity_arch of branch_entity is
 	signal mux2_in			:	std_logic_vector(31 downto 0);
 	signal pc_4_out	:  std_logic_vector(31 downto 0);
 	signal pc_4	         :  std_logic_vector(31 downto 0);
-
 	
 	begin
 		
-		mux1_sel <= branch and zero;
+		mux1_sel <= ((beq and zero) or (bne and (not zero)));
 		mux2_in	<=	pc_4_out(31 downto 28) & shift26_out;		
 		pc_4 <= std_logic_vector(to_unsigned(4, 32));
 

@@ -12,17 +12,9 @@ entity UniMIPS is
     r2_out                          : out std_logic_vector(31 downto 0);
     r1_read                         : out std_logic_vector(4 downto 0);
     r2_read                         : out std_logic_vector(4 downto 0);
-    --reg_input_write                 : in std_logic_vector(4 downto 0);
-    -- sinais de controle
-    wb_sin                          : in std_logic;
-    wren_breg                       : in std_logic;
-    mux_sin                         : in std_logic;
-    mux_reg_dst                     : in std_logic;
-    wpc                             : in std_logic;
-    ula_sel                         : in std_logic;
-    ula_op                          : in ULA_OPERATION;
-    wren_md                         : in std_logic;
+    
     --*sinais de controle
+    wpc                             : in std_logic;
     -- sinal de entrada breg
     zero                            : out std_logic;
     ovfl                            : out std_logic;
@@ -50,12 +42,17 @@ signal write_data_breg: std_logic_vector(31 downto 0);
 signal md_read_data: std_logic_vector(31 downto 0);
 signal Z: std_logic_vector(31 downto 0);
 signal pc_in: std_logic_vector(31 downto 0);
-signal counter_to_pc: std_logic_vector(31 downto 0); 
+signal counter_to_pc: std_logic_vector(31 downto 0);
+signal wb_sin, wren_breg, mux_sin, mread : std_logic;
+signal mux_reg_dst, ula_sel, wren_md: std_logic;
+signal ula_op : ULA_OPERATION;
+signal controleULA_op : std_logic_vector(2 downto 0);
+signal con_jum, con_bne, con_beq : std_logic;
 
 component MemMIPS
     port (
     clk, clk0, wpc 			        : in std_logic;
-    pc_in								  : in std_logic_vector(31 downto 0);
+    pc_in						    : in std_logic_vector(31 downto 0);
 	 instruction                    : out std_logic_vector(31 downto 0);
     out_pc                         : out std_logic_vector(31 downto 0)
     );
@@ -103,10 +100,10 @@ end component;
 
 component branch_entity
 	port(
-		pc_value					:	in std_logic_vector(31 downto 0) := x"00000000"; -- Sinais de entrada do pc
-		branch, zero, jump	:	in std_logic := '0';							         -- Sinais enviados pelo controle
-		shift26_in				: 	in std_logic_vector(25 downto 0) := "00" & x"000000";
-		shift32_in				:	in std_logic_vector(31 downto 0) := x"00000000";
+		pc_value			    :	in std_logic_vector(31 downto 0) := x"00000000"; -- Sinais de entrada do pc
+		beq, bne, zero, jump	:	in std_logic := '0';							         -- Sinais enviados pelo controle
+		shift26_in				: 	in std_logic_vector(25 downto 0);
+		shift32_in				:	in std_logic_vector(31 downto 0);
 		branch_out				:	out std_logic_vector(31 downto 0)
 	);
 end component;
@@ -121,6 +118,24 @@ component mem_dados
     );
 end component;
 
+component controle is
+	port (
+		opcode						    : in std_logic_vector(5 downto 0);
+		regdst, jump, beq, bne		    : out std_logic;
+		memread, memtoreg, memwrite 	: out std_logic;
+		alusrc, regwrite            	: out std_logic;
+		aluop							: out std_logic_vector(2 downto 0)
+	);
+end component;
+
+component controleULA is
+	port (
+		aluop	:	in	std_logic_vector(2 downto 0);
+		funct	:	in 	std_logic_vector(5 downto 0);
+		ulasin	:	out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃ§Ã£o
+	);
+end component;
+
 begin
 
     instruction_out <= instruction;
@@ -130,13 +145,19 @@ begin
     r2_out <= r2;
     md_out <=  md_read_data;
     alu_out <= Z;
-	 inst_counter <= counter_to_pc;
-	 
+    inst_counter <= counter_to_pc;
+    
 	 -- instancia o component de jump e pc + 4
 	 -- TODO: Quando fazer o controle mapear os sinais dos branchs e jumps
 	 branch_component_i1: branch_entity
 	 port map (
-		pc_value 	=> counter_to_pc,
+        pc_value 	=> counter_to_pc,
+        beq => con_beq,
+        bne => con_bne,
+        zero => zero,
+        jump => con_jum,
+        shift26_in => instruction(25 downto 0);, 
+        shift32_in => immediate,
 		branch_out 	=> pc_in
 	 );
 	 
@@ -146,7 +167,7 @@ begin
         clk 			=> clk,
         clk0 			=> clk0,
         wpc 			=> wpc,
-		  pc_in  		=> pc_in,
+		pc_in  		=> pc_in,
         instruction 	=> instruction,
         out_pc 		=> counter_to_pc
     );
@@ -172,7 +193,6 @@ begin
         sel => mux_reg_dst,
         input0 => instruction(20 downto 16),
         input1 => instruction(15 downto 11),
-        --input1 => reg_input_write,
         output1 => reg_dst_out
     );
 
@@ -217,6 +237,28 @@ begin
         input0 => Z,
         input1 => md_read_data,
         output1 => write_data_breg 
+    );
+
+    controle_i1: controle
+    port map (
+        opcode => instruction(31 downto 26),
+        regdst => mux_reg_dst,
+        jump => con_jum, 
+        beq => con_beq, 
+        bne => con_bne,
+        memread => mread, 
+        memtoreg => wb_sin, 
+        memwrite => wren_md, 
+        alusrc => ula_sel, 
+        regwrite => wren_breg,
+        aluop => controleULA_op
+    );
+
+    controleULA_i1: controleULA
+    port map (
+        aluop => controleULA_op,
+        funct => instruction(5 downto 0),
+        ulasin => ula_op
     );
 
 end architecture ; -- arch
