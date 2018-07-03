@@ -5,9 +5,10 @@ use ieee.numeric_std.all ;
 
 entity branch_entity is
     port(
-        clk                         : std_logic;
+        clk                         : in std_logic;
         pc_value                    : in std_logic_vector(31 downto 0); -- Sinais de entrada do pc
-        branch, zero, jump          : in std_logic := '0';              -- Sinais enviados pelo controle
+        beq, bne                    : in std_logic := '0';              -- Sinais de salto
+        zero, jump                  : in std_logic := '0';              -- Sinais enviados pelo controle
         ovfl, eret                  : in std_logic := '0';              -- Sinais de exececao
         shift26_in                  : in std_logic_vector(25 downto 0);
         shift32_in                  : in std_logic_vector(31 downto 0);
@@ -72,7 +73,7 @@ architecture branch_entity_arch of branch_entity is
 
 
     begin
-        mux1_sel <= branch and zero;
+        mux1_sel <= ((bne and not(zero)) xor (beq and zero));
         mux2_in <=  pc_4_out(31 downto 28) & shift26_out;
         pc_4 <= std_logic_vector(to_unsigned(4, 32));
         recover_address <= X"00004380";
