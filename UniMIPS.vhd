@@ -35,7 +35,7 @@ entity UniMIPS is
 	 debug_memwrite		    : out std_logic;
 	 debug_alusrc			    : out std_logic;
 	 debug_regwrite			 : out std_logic;
-	 debug_aluop             : out std_logic_vector(2 downto 0)
+	 debug_aluop             : out std_logic_vector(3 downto 0)
     );
 end entity ; -- UniMIPS
 
@@ -60,7 +60,7 @@ signal counter_to_pc: std_logic_vector(31 downto 0);
 signal wb_sin, wren_breg, mux_sin, mread : std_logic;
 signal mux_reg_dst, ula_sel, wren_md: std_logic;
 signal ula_op : ULA_OPERATION;
-signal controleULA_op : std_logic_vector(2 downto 0);
+signal controleULA_op : std_logic_vector(3 downto 0);
 signal con_jum, con_bne, con_beq : std_logic;
 signal zeroUla : std_logic;
 
@@ -139,13 +139,13 @@ component controle is
 		regdst, jump, beq, bne		    : out std_logic;
 		memread, memtoreg, memwrite 	: out std_logic;
 		alusrc, regwrite            	: out std_logic;
-		aluop							: out std_logic_vector(2 downto 0)
+		aluop							: out std_logic_vector(3 downto 0)
 	);
 end component;
 
 component controleULA is
 	port (
-		aluop	:	in	std_logic_vector(2 downto 0);
+		aluop	:	in	std_logic_vector(3 downto 0);
 		funct	:	in 	std_logic_vector(5 downto 0);
 		ulasin	:	out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃ§Ã£o
 	);
