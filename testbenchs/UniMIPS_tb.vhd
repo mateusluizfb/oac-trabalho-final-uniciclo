@@ -19,6 +19,21 @@ signal r2_out                          : std_logic_vector(31 downto 0);
 signal md_out                          : std_logic_vector(31 downto 0);
 signal alu_out                         : std_logic_vector(31 downto 0);
 
+-- sinais de teste do controle
+signal debug_controle_opcode   : std_logic_vector(5 downto 0);
+signal debug_ULA_funct 			 : std_logic_vector(5 downto 0);
+signal debug_mux_reg_dst		 : std_logic;
+signal debug_jump		          : std_logic;
+signal debug_beq		          : std_logic;
+signal debug_bne		          : std_logic;
+signal debug_memread		       : std_logic;
+signal debug_memtoreg		    : std_logic;
+signal debug_memwrite		    : std_logic;
+signal debug_alusrc			    : std_logic;
+signal debug_regwrite			 : std_logic;
+signal debug_aluop             : std_logic_vector(2 downto 0);
+
+
 constant CLK_PERIOD : time := 100 ps;
 constant CLK0_PERIOD : time := 10 ps;
 
@@ -40,7 +55,21 @@ component UniMIPS
     instruction_out                 : out std_logic_vector(31 downto 0);
     inst_counter                    : out std_logic_vector(31 downto 0);
     alu_out                         : out std_logic_vector(31 downto 0);
-    md_out                          : out std_logic_vector(31 downto 0)
+    md_out                          : out std_logic_vector(31 downto 0);
+	 
+	 -- sinais de debug do controle
+	 debug_controle_opcode   : out std_logic_vector(5 downto 0);
+	 debug_ULA_funct 			 : out std_logic_vector(5 downto 0);
+	 debug_mux_reg_dst		 : out std_logic;
+	 debug_jump		          : out std_logic;
+	 debug_beq		          : out std_logic;
+	 debug_bne		          : out std_logic;
+	 debug_memread		       : out std_logic;
+	 debug_memtoreg		    : out std_logic;
+	 debug_memwrite		    : out std_logic;
+	 debug_alusrc			    : out std_logic;
+	 debug_regwrite			 : out std_logic;
+	 debug_aluop             : out std_logic_vector(2 downto 0)
     );
 end component;
 begin
@@ -69,7 +98,22 @@ begin
     instruction_out => instruction_out,
     inst_counter    => inst_counter,
     alu_out => alu_out,
-    md_out => md_out
+    md_out => md_out,
+	
+	
+		-- sinais de debug do controle 
+		 debug_controle_opcode   => debug_controle_opcode,
+		 debug_ULA_funct 			 => debug_ULA_funct,
+		 debug_mux_reg_dst		 => debug_mux_reg_dst,
+		 debug_jump		          => debug_jump,
+		 debug_beq		          => debug_beq,
+		 debug_bne		          => debug_bne,
+		 debug_memread		       => debug_memread,
+		 debug_memtoreg		    => debug_memtoreg,
+		 debug_memwrite		    => debug_memwrite,
+		 debug_alusrc			    => debug_alusrc,
+		 debug_regwrite			 => debug_regwrite,
+		 debug_aluop             => debug_aluop
     );
 
 

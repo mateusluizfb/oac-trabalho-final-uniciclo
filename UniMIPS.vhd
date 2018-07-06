@@ -12,7 +12,7 @@ entity UniMIPS is
     r2_out                          : out std_logic_vector(31 downto 0);
     r1_read                         : out std_logic_vector(4 downto 0);
     r2_read                         : out std_logic_vector(4 downto 0);
-    
+
     --*sinais de controle
     wpc                             : in std_logic;
     -- sinal de entrada breg
@@ -21,7 +21,21 @@ entity UniMIPS is
     instruction_out                 : out std_logic_vector(31 downto 0);
     inst_counter                    : out std_logic_vector(31 downto 0);
     alu_out                         : out std_logic_vector(31 downto 0);
-    md_out                          : out std_logic_vector(31 downto 0)
+    md_out                          : out std_logic_vector(31 downto 0);
+
+	 -- sinal de debug do controle
+	 debug_controle_opcode   : out std_logic_vector(5 downto 0);
+	 debug_ULA_funct 			 : out std_logic_vector(5 downto 0);
+	 debug_mux_reg_dst		 : out std_logic;
+	 debug_jump		          : out std_logic;
+	 debug_beq		          : out std_logic;
+	 debug_bne		          : out std_logic;
+	 debug_memread		       : out std_logic;
+	 debug_memtoreg		    : out std_logic;
+	 debug_memwrite		    : out std_logic;
+	 debug_alusrc			    : out std_logic;
+	 debug_regwrite			 : out std_logic;
+	 debug_aluop             : out std_logic_vector(2 downto 0)
     );
 end entity ; -- UniMIPS
 
@@ -33,7 +47,7 @@ signal reset_breg: std_logic := '0';
 
 -- sinal de saida da memoria e entrada do breg
 signal instruction: std_logic_vector(31 downto 0);
--- sinal de 
+-- sinal de
 signal reg_dst_out: std_logic_vector(4 downto 0);
 signal r1, r2, ula_dst: std_logic_vector(31 downto 0);
 signal immediate: std_logic_vector(31 downto 0);
@@ -59,7 +73,7 @@ component MemMIPS
     );
 end component;
 
-component breg 
+component breg
     port (
     clock, write_enable, reset      : in  std_logic;
     register_input_1                : in  std_logic_vector(4 downto 0);
@@ -148,7 +162,7 @@ begin
     alu_out <= Z;
     inst_counter <= counter_to_pc;
     zero <= zeroUla;
-    
+
 	 -- instancia o component de jump e pc + 4
 	 -- TODO: Quando fazer o controle mapear os sinais dos branchs e jumps
 	 branch_component_i1: branch_entity
@@ -162,7 +176,7 @@ begin
         shift32_in => immediate,
 		branch_out 	=> pc_in
 	 );
-	 
+
     -- instancia a memoria de instruções
     inst_mem_i1: MemMIPS
     port map (
@@ -228,7 +242,7 @@ begin
         address => Z(9 downto 2),
         clock => clk0,
         data => r2,
-        wren => wren_md, 
+        wren => wren_md,
         q => md_read_data
     );
 
@@ -238,20 +252,33 @@ begin
         sel => wb_sin,
         input0 => Z,
         input1 => md_read_data,
-        output1 => write_data_breg 
+        output1 => write_data_breg
     );
+
+	 debug_controle_opcode   <= instruction(31 downto 26);
+	 debug_ULA_funct 			 <= instruction(5 downto 0);
+	 debug_mux_reg_dst		 <= mux_reg_dst;
+	 debug_jump		          <= con_jum;
+	 debug_beq		          <= con_beq;
+	 debug_bne		          <= con_bne;
+	 debug_memread		       <= mread;
+	 debug_memtoreg		    <= wb_sin;
+	 debug_memwrite		    <= wren_md;
+	 debug_alusrc			    <= ula_sel;
+	 debug_regwrite			 <= wren_breg;
+	 debug_aluop             <= controleULA_op;
 
     controle_i1: controle
     port map (
         opcode => instruction(31 downto 26),
         regdst => mux_reg_dst,
-        jump => con_jum, 
-        beq => con_beq, 
+        jump => con_jum,
+        beq => con_beq,
         bne => con_bne,
-        memread => mread, 
-        memtoreg => wb_sin, 
-        memwrite => wren_md, 
-        alusrc => ula_sel, 
+        memread => mread,
+        memtoreg => wb_sin,
+        memwrite => wren_md,
+        alusrc => ula_sel,
         regwrite => wren_breg,
         aluop => controleULA_op
     );
