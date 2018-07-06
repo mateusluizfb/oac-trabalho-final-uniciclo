@@ -4,14 +4,15 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 -- aluop:
---	000: tipo-R
---  001: add
---  010: addu
---  011: sub
---  100: and
---  101: or
---  110: slt
---	111: lui
+--	0000: tipo-R
+--  0001: add
+--  0010: addu
+--  0011: sub
+--  0100: and
+--  0101: or
+--  0110: slt
+--	0111: lui
+--  1000: xori
 
 
 entity controle is
@@ -20,7 +21,7 @@ entity controle is
 		regdst, jump, beq, bne		    : out std_logic;
 		memread, memtoreg, memwrite 	: out std_logic;
 		alusrc, regwrite            	: out std_logic;
-		aluop							: out std_logic_vector(2 downto 0)
+		aluop							: out std_logic_vector(3 downto 0)
 	);
 end entity;
 
@@ -30,7 +31,7 @@ begin
 	begin
 		case opcode	is
 			when "000000"  => -- TIPO R
-				aluop 	<= "000";
+				aluop 	<= "0000";
 				regdst 	<= '1';
 				alusrc 	<= '0';
 				memtoreg <= '0';
@@ -38,10 +39,10 @@ begin
 				memread  <= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '0';
 			when "001100"	=> -- ANDI
-				aluop 	<= "100"; -- ?
+				aluop 	<= "0100"; -- ?
 				regdst 	<= '0';
 				alusrc 	<= '1';
 				memtoreg <= '0';
@@ -49,10 +50,10 @@ begin
 				memread  <= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '0';
-			when "001101"	=> -- ORI	
-				aluop 	<= "101"; -- ?
+			when "001101"	=> -- ORI
+				aluop 	<= "0101"; -- ?
 				regdst 	<= '0';
 				alusrc 	<= '1';
 				memtoreg <= '0';
@@ -60,10 +61,10 @@ begin
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '0';
 			when "001000"	=> -- ADDI
-				aluop 	<= "001"; -- ?
+				aluop 	<= "0001"; -- ?
 				regdst 	<= '0';
 				alusrc 	<= '1';
 				memtoreg <= '0';
@@ -71,10 +72,21 @@ begin
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
+				jump <= '0';
+			when "001110"	=> -- XORI
+				aluop 	<= "1000"; -- ?
+				regdst 	<= '0';
+				alusrc 	<= '1';
+				memtoreg <= '0';
+				regwrite <= '1';
+				memread 	<= '0';
+				memwrite <= '0';
+				beq 		<= '0';
+				bne		<= '0';
 				jump <= '0';
 			when "001001"	=> -- ADDIU
-				aluop 	<= "010"; -- ?
+				aluop 	<= "0010"; -- ?
 				regdst 	<= '0';
 				alusrc 	<= '1';
 				memtoreg <= '0';
@@ -82,10 +94,10 @@ begin
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '0';
 			when "000100"	=> -- BEQ
-				aluop 	<= "011"; -- branch: sub
+				aluop 	<= "0011"; -- branch: sub
 				regdst 	<= '1';
 				alusrc 	<= '0';
 				memtoreg <= '0';
@@ -93,10 +105,10 @@ begin
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '1';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '0';
 			when "000101"	=> -- BNE
-				aluop 	<= "011"; -- branch: sub
+				aluop 	<= "0011"; -- branch: sub
 				regdst 	<= '1';
 				alusrc 	<= '0';
 				memtoreg <= '0';
@@ -104,10 +116,10 @@ begin
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '1';	
+				bne		<= '1';
 				jump <= '0';
 			when "000010"	=> -- J
-				aluop 	<= "010"; -- jump: don't care
+				aluop 	<= "0010"; -- jump: don't care
 				regdst 	<= '0';
 				alusrc 	<= '0';
 				memtoreg <= '0';
@@ -115,10 +127,10 @@ begin
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '1';
 			when "000011"	=> -- JAL
-				aluop 	<= "010"; -- jump: don't care
+				aluop 	<= "0010"; -- jump: don't care
 				regdst 	<= '1';
 				alusrc 	<= '0';
 				memtoreg <= '0';
@@ -126,10 +138,10 @@ begin
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '1';
 			when "001111"	=> -- LUI
-				aluop 	<= "111"; -- lui
+				aluop 	<= "0111"; -- lui
 				regdst 	<= '0';
 				alusrc 	<= '1';
 				memtoreg <= '0';
@@ -137,10 +149,10 @@ begin
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '0';
 			when "100011"	=> -- LW
-				aluop 	<= "010"; -- load word: add
+				aluop 	<= "0010"; -- load word: add
 				regdst 	<= '0';
 				alusrc 	<= '1';
 				memtoreg <= '1';
@@ -148,10 +160,10 @@ begin
 				memread 	<= '1';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '0';
 			when "001010"	=> -- SLTI
-				aluop 	<= "110"; -- ?
+				aluop 	<= "0110"; -- ?
 				regdst 	<= '0';
 				alusrc 	<= '1';
 				memtoreg <= '0';
@@ -159,10 +171,10 @@ begin
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '0';
 			when "101011"	=> -- SW
-				aluop 	<= "010";
+				aluop 	<= "0010";
 				regdst 	<= '1';
 				alusrc 	<= '1';
 				memtoreg <= '0';
@@ -170,10 +182,10 @@ begin
 				memread 	<= '0';
 				memwrite <= '1';
 				beq 		<= '0';
-				bne		<= '0';	
+				bne		<= '0';
 				jump <= '0';
 			when others =>  		-- Operacao nao implementada
-				aluop 	 <= "---";
+				aluop 	 <= "----";
 				regdst 	 <= '-';
 				alusrc 	 <= '-';
 				memtoreg <= '-';
@@ -181,9 +193,9 @@ begin
 				memread  <= '-';
 				memwrite <= '-';
 				beq		 <= '-';
-				bne		 <= '-';	
+				bne		 <= '-';
 				jump <= '-';
-		end case;			
+		end case;
 	end process;
 
-end architecture; 
+end architecture;

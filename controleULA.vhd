@@ -5,18 +5,19 @@ use ieee.numeric_std.all;
 use work.ula_package.all;
 
 -- aluop:
---	000: tipo-R
---  001: add
---  010: addu
---  011: sub
---  100: and
---  101: or
---  110: slt
---	111: lui
+--	0000: tipo-R
+--  0001: add
+--  0010: addu
+--  0011: sub
+--  0100: and
+--  0101: or
+--  0110: slt
+--	0111: lui
+--  1000: xori
 
 entity controleULA is
 	port (
-		aluop	:	in	std_logic_vector(2 downto 0);
+		aluop	:	in	std_logic_vector(3 downto 0);
 		funct	:	in 	std_logic_vector(5 downto 0);
 		ulasin	:	out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃ§Ã£o
 	);
@@ -27,7 +28,7 @@ architecture controleULA_arch of controleULA is
 		init: process(aluop, funct)
 		begin
 			case aluop is	-- no caso de uma operação tipo r
-				when "000" =>
+				when "0000" =>
 					case funct is
 						when "100000" => -- add
 							ulasin <= ADD;
@@ -64,20 +65,22 @@ architecture controleULA_arch of controleULA is
 						when others	  => -- operacao nao implementada na ula
 							ulasin <= SLL_OP;
 					end case;
-			when "001" =>    -- addi, lw, sw
+			when "0001" =>    -- addi, lw, sw
 				ulasin <= ADD;
-			when "010" =>	-- addiu
+			when "0010" =>	-- addiu
 				ulasin <= ADDU;
-			when "011" =>	-- bne, beq
+			when "0011" =>	-- bne, beq
 				ulasin <= SUB;
-			when "100" =>	-- andi
+			when "0100" =>	-- andi
 				ulasin <= AND_OP;
-			when "101" =>	-- ori
+			when "0101" =>	-- ori
 				ulasin <= OR_OP;
-			when "110" =>	-- slti
+			when "0110" =>	-- slti
 				ulasin <= SLT;
-			when "111" =>	-- lui
+			when "0111" =>	-- lui
 				ulasin <= LUI;
+			when "1000" => -- xori
+				ulasin <= XOR_OP;
 			when others => ulasin <= SLL_OP;
 			end case;
 		end process init;

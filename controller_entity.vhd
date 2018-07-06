@@ -6,14 +6,15 @@ use work.ula_package.all;
 
 
 -- aluop:
---	000: tipo-R
---  001: add
---  010: addu
---  011: sub
---  100: and
---  101: or
---  110: slt
---	111: lui
+--	0000: tipo-R
+-- 0001: add
+-- 0010: addu
+-- 0011: sub
+-- 0100: and
+-- 0101: or
+-- 0110: slt
+--	0111: lui
+-- 1000: xori
 
 entity controller_entity is
     port(
@@ -31,13 +32,13 @@ architecture controller_entity_arch of controller_entity is
             regdst, jump, beq, bne		    : out std_logic;
             memread, memtoreg, memwrite 	: out std_logic;
             alusrc, regwrite            	: out std_logic;
-            aluop							: out std_logic_vector(2 downto 0)
+            aluop							: out std_logic_vector(3 downto 0)
         );
     end component;
 
     component controleULA is
         port (
-            aluop	:	in	std_logic_vector(2 downto 0);
+            aluop	:	in	std_logic_vector(3 downto 0);
             funct	:	in 	std_logic_vector(5 downto 0);
             ulasin	:	out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃ§Ã£o
         );
@@ -54,7 +55,7 @@ architecture controller_entity_arch of controller_entity is
         );
     end component;
 
-    signal control_out  :   std_logic_vector(2 downto 0);
+    signal control_out  :   std_logic_vector(3 downto 0);
     signal rdst, jmp, beq_out, bne_out  :   std_logic;
     signal mread, mwrite, mtoreg, ulasrc, rwrite : std_logic;
     signal alucontrol_out : ULA_OPERATION;
