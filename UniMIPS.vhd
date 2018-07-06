@@ -48,6 +48,7 @@ signal mux_reg_dst, ula_sel, wren_md: std_logic;
 signal ula_op : ULA_OPERATION;
 signal controleULA_op : std_logic_vector(2 downto 0);
 signal con_jum, con_bne, con_beq : std_logic;
+signal zeroUla : std_logic;
 
 component MemMIPS
     port (
@@ -146,6 +147,7 @@ begin
     md_out <=  md_read_data;
     alu_out <= Z;
     inst_counter <= counter_to_pc;
+    zero <= zeroUla;
     
 	 -- instancia o component de jump e pc + 4
 	 -- TODO: Quando fazer o controle mapear os sinais dos branchs e jumps
@@ -154,9 +156,9 @@ begin
         pc_value 	=> counter_to_pc,
         beq => con_beq,
         bne => con_bne,
-        zero => zero,
+        zero => zeroUla,
         jump => con_jum,
-        shift26_in => instruction(25 downto 0);, 
+        shift26_in => instruction(25 downto 0),
         shift32_in => immediate,
 		branch_out 	=> pc_in
 	 );
@@ -202,7 +204,7 @@ begin
         B => ula_dst,
         ula_op => ula_op,
         ula_out => Z,
-        zero => zero,
+        zero => zeroUla,
         overflow => ovfl
     );
 
