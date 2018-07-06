@@ -17,3 +17,10 @@ L1:
 	addi $t0, $t0, 4
 	addi $a1, $a1, -1
 	li $v0, 1
+	la $t0, vetor
+	li $s0, 1
+	li $s1, 2
+	li $s2, 3
+	sw $s2, 0($t0)
+	sw $s1, 4($t0)
+	sw $s0, 8($t0)
