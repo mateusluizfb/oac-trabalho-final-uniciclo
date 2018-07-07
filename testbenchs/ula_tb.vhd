@@ -41,12 +41,14 @@ ARCHITECTURE ula_arch OF ula_tb IS
 	SIGNAL ula_out 			: STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL zero 				: std_logic;
 	SIGNAL overflow			: std_logic;
+	SIGNAL shift_amount		: STD_LOGIC_VECTOR(4 downto 0);
 	
 	COMPONENT ula
 		PORT (
 			A 					: IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 			B 					: IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 			ula_op 			: IN ula_operation;
+			shift_amount	: IN std_logic_vector(4 downto 0);
 			ula_out 			: OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 			zero				: OUT STD_LOGIC;
 			overflow 		: OUT STD_LOGIC
@@ -61,7 +63,8 @@ ARCHITECTURE ula_arch OF ula_tb IS
 			ula_op 			=> ula_op,
 			ula_out 			=> ula_out,
 			zero 				=> zero,
-			overflow 		=> overflow
+			overflow 		=> overflow,
+			shift_amount		=> shift_amount
 		);
 	init : PROCESS                                               
 	-- variable declarations                                     
@@ -87,11 +90,11 @@ ARCHITECTURE ula_arch OF ula_tb IS
 		wait for 10 ns;
 		assert (ula_out = std_LOGIC_VECTOR(to_signed(-1, 32)));
 		
-		A <= x"FFFFFFFF";
-		B <= x"00000001";
+		A <= x"7FFFFFFF";
+		B <= x"7FFFFFFF";
 		ula_op <= ADD;
 		wait for 10 ns;
-		assert (overflow = '1');
+		assert (overflow = '1') report "Overflow add failure" severity failure;
 		
 		-- TESTS ADDU
 		
@@ -133,11 +136,11 @@ ARCHITECTURE ula_arch OF ula_tb IS
 		wait for 10 ns;
 		assert (ula_out = std_LOGIC_VECTOR(to_signed(-2, 32)));
 		
-		A <= x"80000000";
-		B <= x"00000001";
+		A <= x"7FFFFFFF";
+		B <= x"FFFFFFFA";
 		ula_op <= SUB;
 		wait for 10 ns;
-		assert (overflow = '1');
+		assert (overflow = '1') report "Overflow sub failure" severity failure;
 		
 		-- TESTS SUBU
 		
@@ -221,28 +224,32 @@ ARCHITECTURE ula_arch OF ula_tb IS
 		
 		-- TESTS SLL
 		
-		A <= std_LOGIC_VECTOR(to_signed(1, 32));
+		A <= std_LOGIC_VECTOR(to_signed(0, 32));
 		B <= x"00000001";
+		SHIFT_AMOUNT <= "00001";
 		ula_op <= SLL_OP;
 		wait for 10 ns;
 		assert (ula_out = x"00000002");
 		
-		A <= std_LOGIC_VECTOR(to_signed(2, 32));
+		A <= std_LOGIC_VECTOR(to_signed(0, 32));
 		B <= x"00000001";
+		SHIFT_AMOUNT <= "00010";
 		ula_op <= SLL_OP;
 		wait for 10 ns;
 		assert (ula_out = x"00000004");
 		
 		-- TESTS SRL
 		
-		A <= std_LOGIC_VECTOR(to_signed(1, 32));
+		A <= std_LOGIC_VECTOR(to_signed(0, 32));
 		B <= x"00000002";
+		SHIFT_AMOUNT <= "00001";
 		ula_op <= SRL_OP;
 		wait for 10 ns;
 		assert (ula_out = x"00000001");
 		
-		A <= std_LOGIC_VECTOR(to_signed(2, 32));
+		A <= std_LOGIC_VECTOR(to_signed(0, 32));
 		B <= x"00000004";
+		shift_amount <= "00010";
 		ula_op <= SRL_OP;
 		wait for 10 ns;
 		assert (ula_out = x"00000001");
@@ -277,15 +284,17 @@ ARCHITECTURE ula_arch OF ula_tb IS
 		
 		-- TESTS SRA
 		
-		A <= std_LOGIC_VECTOR(to_signed(4, 32));
+		A <= std_LOGIC_VECTOR(to_signed(0, 32));
 		B <= x"FFFFFF01";
 		ula_op <= SRA_OP;
+		SHIFT_AMOUNT <= "00100";
 		wait for 10 ns;
 		assert (ula_out = x"FFFFFFF0");
 		
-		A <= std_LOGIC_VECTOR(to_signed(8, 32));
+		A <= std_LOGIC_VECTOR(to_signed(0, 32));
 		B <= x"FFFFFF01";
 		ula_op <= SRA_OP;
+		SHIFT_AMOUNT <= "01000";
 		wait for 10 ns;
 		assert (ula_out = x"FFFFFFFF");
 		
