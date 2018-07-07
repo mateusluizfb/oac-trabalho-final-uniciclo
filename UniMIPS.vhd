@@ -38,11 +38,14 @@ architecture arch of UniMIPS is
 -- sinais de controle do breg
 --signal wren_breg: std_logic;
 signal reset_breg: std_logic := '0';
+signal jal: std_logic := '0';
 
 -- sinal de saida da memoria e entrada do breg
 signal instruction: std_logic_vector(31 downto 0);
 -- sinal de 
+signal register_ra: std_logic_vector(4 downto 0);
 signal reg_dst_out: std_logic_vector(4 downto 0);
+signal reg_rd_rt_out: std_logic_vector(4 downto 0);
 signal r1, r2, ula_dst: std_logic_vector(31 downto 0);
 signal immediate: std_logic_vector(31 downto 0);
 signal md_address: std_logic_vector(7 downto 0);
@@ -50,7 +53,8 @@ signal write_data_breg: std_logic_vector(31 downto 0);
 signal md_read_data: std_logic_vector(31 downto 0);
 signal Z: std_logic_vector(31 downto 0);
 signal pc_in: std_logic_vector(31 downto 0);
-signal counter_to_pc: std_logic_vector(31 downto 0); 
+signal counter_to_pc: std_logic_vector(31 downto 0);
+signal Z_md_data: std_logic_vector(31 downto 0);
 
 component MemMIPS
     port (
@@ -103,10 +107,13 @@ end component;
 
 component branch_entity
     port(
+        clk                         : in std_logic;
         pc_value                    : in std_logic_vector(31 downto 0) := x"00000000"; -- Sinais de entrada do pc
-        branch, zero, jump          : in std_logic := '0';                             -- Sinais enviados pelo controle
+        beq, bne, zero              : in std_logic := '0';
+        jump, jr, jal               : in std_logic := '0';                             -- Sinais enviados pelo controle
         shift26_in                  : in std_logic_vector(25 downto 0) := "00" & x"000000";
         shift32_in                  : in std_logic_vector(31 downto 0) := x"00000000";
+        rs_address                  : in std_logic_vector(31 downto 0);
         branch_out                  : out std_logic_vector(31 downto 0)
     );
 end component;
@@ -131,12 +138,16 @@ begin
     md_out <=  md_read_data;
     alu_out <= Z;
     inst_counter <= counter_to_pc;
+    register_ra <= "11111";
 
     -- instancia o component de jump e pc + 4
     -- TODO: Quando fazer o controle mapear os sinais dos branchs e jumps
     branch_component_i1: branch_entity
     port map (
+        clk => clk,
+        jal => jal,
         pc_value    => counter_to_pc,
+        rs_address  => r2,
         branch_out  => pc_in
     );
 
@@ -173,6 +184,16 @@ begin
         input0 => instruction(20 downto 16),
         input1 => instruction(15 downto 11),
         --input1 => reg_input_write,
+        output1 => reg_rd_rt_out
+    );
+
+    mux_reg_dst_i2: mux
+    generic map (WSIZE => 5)
+    port map (
+        sel => jal,
+        input0 => reg_rd_rt_out,
+        input1 => register_ra,
+        --input1 => reg_input_write,
         output1 => reg_dst_out
     );
 
@@ -206,7 +227,7 @@ begin
         address => Z(9 downto 2),
         clock => clk0,
         data => r2,
-        wren => wren_md, 
+        wren => wren_md,
         q => md_read_data
     );
 
@@ -216,6 +237,14 @@ begin
         sel => wb_sin,
         input0 => Z,
         input1 => md_read_data,
+        output1 => Z_md_data
+    );
+
+    mux_jal_i1: mux
+    port map (
+        sel => jal,
+        input0 => Z_md_data,
+        input1 => counter_to_pc,
         output1 => write_data_breg 
     );
 
