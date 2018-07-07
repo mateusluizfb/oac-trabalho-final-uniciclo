@@ -69,6 +69,7 @@ architecture branch_entity_arch of branch_entity is
     signal epc_address  :  std_logic_vector(31 downto 0);
     signal recover_address:  std_logic_vector(31 downto 0);
     signal mux1_sel     :   std_logic;
+    signal jump_jal     :   std_logic;
     signal mux2_in      :   std_logic_vector(31 downto 0);
     signal mux_eret     :   std_logic_vector(31 downto 0);
     signal pc_4_out     :  std_logic_vector(31 downto 0);
@@ -80,6 +81,7 @@ architecture branch_entity_arch of branch_entity is
         mux2_in <=  pc_4_out(31 downto 28) & shift26_out;
         pc_4 <= std_logic_vector(to_unsigned(4, 32));
         recover_address <= X"00004380";
+        jump_jal <= jump or jal;
 
         somador_pc_4_i2: somador
             port map (
@@ -125,7 +127,7 @@ architecture branch_entity_arch of branch_entity is
 
         mux_i2: mux
             port map (
-                sel     =>  jump or jal,
+                sel     =>  jump_jal,
                 input0  =>  mux1_out,
                 input1  =>  mux2_in,
                 output1 =>  mux_branch_out
