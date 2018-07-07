@@ -10,8 +10,10 @@ entity branch_entity is
         beq, bne                    : in std_logic := '0';              -- Sinais de salto
         zero, jump                  : in std_logic := '0';              -- Sinais enviados pelo controle
         ovfl, eret                  : in std_logic := '0';              -- Sinais de exececao
+        jr, jal                     : in std_logic := '0';              -- Sinais de jr e jal
         shift26_in                  : in std_logic_vector(25 downto 0);
         shift32_in                  : in std_logic_vector(31 downto 0);
+        rs_address                  : in std_logic_vector(31 downto 0);
         branch_out                  : out std_logic_vector(31 downto 0)
     );
 end entity branch_entity;
@@ -68,6 +70,7 @@ architecture branch_entity_arch of branch_entity is
     signal recover_address:  std_logic_vector(31 downto 0);
     signal mux1_sel     :   std_logic;
     signal mux2_in      :   std_logic_vector(31 downto 0);
+    signal mux_eret     :   std_logic_vector(31 downto 0);
     signal pc_4_out     :  std_logic_vector(31 downto 0);
     signal pc_4         :  std_logic_vector(31 downto 0);
 
@@ -122,7 +125,7 @@ architecture branch_entity_arch of branch_entity is
 
         mux_i2: mux
             port map (
-                sel     =>  jump,
+                sel     =>  jump or jal,
                 input0  =>  mux1_out,
                 input1  =>  mux2_in,
                 output1 =>  mux_branch_out
@@ -142,7 +145,15 @@ architecture branch_entity_arch of branch_entity is
                 sel     =>  eret,
                 input0  =>  mux_epc,
                 input1  =>  epc_address,
-                output1 =>  branch_out
+                output1 =>  mux_eret
+            );
+
+        mux_i5: mux
+            port map (
+                sel => jr,
+                input0 => mux_eret,
+                input1 => rs_address,
+                output1 => branch_out
             );
 
 end architecture branch_entity_arch;
