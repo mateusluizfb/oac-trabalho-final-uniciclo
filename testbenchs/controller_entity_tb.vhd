@@ -245,6 +245,15 @@ BEGIN
 		assert(entity_out = x"BAAAACCC");
 
 		wait for 4 ps;
+	-- jal
+		funct_in <= "001000";
+		val1_in <= std_LOGIC_VECTOR(to_signed(4, 32));
+		val2_in <= x"AAAACCCB";
+		wait for 4 ps;
+		assert(jal = '1') report "jal failure";
+		assert(entity_out = x"BAAAACCC");
+
+		wait for 4 ps;
 	-- Lui
 		funct_in <= "111101";
 		val1_in <= std_LOGIC_VECTOR(to_signed(0, 32));
