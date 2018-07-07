@@ -32,71 +32,208 @@ END branch_entity_tb;
 ARCHITECTURE branch_entity_arch OF branch_entity_tb IS
 -- constants                                                 
 -- signals                                                   
-SIGNAL branch : STD_LOGIC;
-SIGNAL branch_out : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL clk : STD_LOGIC;
+SIGNAL ovfl : STD_LOGIC;
+SIGNAL eret : STD_LOGIC;
+SIGNAL beq : STD_LOGIC;
+SIGNAL bne : STD_LOGIC;
 SIGNAL jump : STD_LOGIC;
+SIGNAL zero : STD_LOGIC;
 SIGNAL pc_value : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL shift26_in : STD_LOGIC_VECTOR(25 DOWNTO 0);
 SIGNAL shift32_in : STD_LOGIC_VECTOR(31 DOWNTO 0);
-SIGNAL zero : STD_LOGIC;
+SIGNAL branch_out : STD_LOGIC_VECTOR(31 DOWNTO 0);
+
+constant CLK_PERIOD : time := 100 ps;
+constant CLK0_PERIOD : time := 10 ps;
+
 COMPONENT branch_entity
-	PORT (
-	branch : IN STD_LOGIC;
-	branch_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-	jump : IN STD_LOGIC;
-	pc_value : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-	shift26_in : IN STD_LOGIC_VECTOR(25 DOWNTO 0);
-	shift32_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-	zero : IN STD_LOGIC
-	);
+    PORT (
+    clk : IN STD_LOGIC;
+    beq : IN STD_LOGIC;
+    bne : IN STD_LOGIC;
+    branch_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+    jump : IN STD_LOGIC;
+    ovfl : IN STD_LOGIC;
+    eret : IN STD_LOGIC;
+    pc_value : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    shift26_in : IN STD_LOGIC_VECTOR(25 DOWNTO 0);
+    shift32_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    zero : IN STD_LOGIC
+    );
 END COMPONENT;
 BEGIN
-	i1 : branch_entity
-	PORT MAP (
+    i1 : branch_entity
+    PORT MAP (
 -- list connections between master ports and signals
-	branch => branch,
-	branch_out => branch_out,
-	jump => jump,
-	pc_value => pc_value,
-	shift26_in => shift26_in,
-	shift32_in => shift32_in,
-	zero => zero
-	);
+    clk => clk,
+    ovfl => ovfl,
+    eret => eret,
+    beq => beq,
+    bne => bne,
+    branch_out => branch_out,
+    jump => jump,
+    pc_value => pc_value,
+    shift26_in => shift26_in,
+    shift32_in => shift32_in,
+    zero => zero
+    );
+
+Clk_process : process
+begin
+    clk <= '0';
+    wait for CLK_PERIOD/2;  --for half of clock period clk stays at '0'.
+    clk <= '1';
+    wait for CLK_PERIOD/2;  --for next half of clock period clk stays at '1'.
+end process;
+
 init : PROCESS                                               
 -- variable declarations                                     
 BEGIN                                                        
         -- code that executes only once 
-		  
-	-- Passa o valor do pc + 4 direto pra saída
-	branch 	  <= '0';
-	zero 	 	  <= '0';
-	jump 	 	  <= '0';
-	shift26_in <= "00" & x"000000";
-	shift32_in <= x"00000000";
-	pc_value   <= x"0000CFA0";
-	wait for 10 ns;
-	assert ( branch_out = x"0000CFA4");
-	
-	-- soma o imediato shiftado << 2 e soma com o PC
-	branch 	  <= '1';
-	zero 	 	  <= '1';
-	jump 	 	  <= '0';
-	shift26_in <= "00" & x"000000";
-	shift32_in <= x"0000000C";
-	pc_value   <= x"0000CFA0";
-	wait for 10 ns;
-	assert ( branch_out = x"0000CFD4");
+          
+    -- Passa o valor do pc + 4 direto pra saída
+    wait for 50 ps;
+    pc_value   <= x"0000CFA0";
+    wait for 50 ps;
+    pc_value      <= x"0000CFA0";
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000000";
+    shift32_in <= x"00000000";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert ( branch_out = x"0000CFA4");
+    
+    -- soma o imediato shiftado << 2 e soma com o PC
+    wait for 50 ps;
+    beq           <= '1';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '1';
+    jump          <= '0';
+    shift26_in <= "00" & x"000000";
+    shift32_in <= x"0000000C";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert ( branch_out = x"0000CFD8");
 
-	-- jump
-	branch 	  <= '0';
-	zero 	 	  <= '0';
-	jump 	 	  <= '1';
-	shift26_in <= "00" & x"000C0C";
-	shift32_in <= x"00000000";
-	pc_value   <= x"E000CFA0";
-	wait for 10 ns;
-	assert (branch_out = x"E0003030");
-	
-WAIT;                                                       
-END PROCESS init;                                    
+    -- jump
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jump          <= '1';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00003030");
+
+    -- no jump
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00003034");
+
+    -- exception handling
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '1';
+    eret          <= '0';
+    zero          <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00004380");
+
+    -- exception handling
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00004384");
+
+    -- return address
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '1';
+    zero          <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00003038");
+
+    -- no jump
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"0000303C");
+
+    -- bne branch
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '1';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000C0C";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00006070");
+
+    -- no jump
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00006074");
+    wait for 100 ps;
+WAIT;
+END PROCESS init;
 END branch_entity_arch;

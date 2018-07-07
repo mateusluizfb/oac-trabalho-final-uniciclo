@@ -66,10 +66,10 @@ signal zeroUla : std_logic;
 
 component MemMIPS
     port (
-    clk, clk0, wpc 			        : in std_logic;
-    pc_in						    : in std_logic_vector(31 downto 0);
-	 instruction                    : out std_logic_vector(31 downto 0);
-    out_pc                         : out std_logic_vector(31 downto 0)
+    clk, clk0, wpc                  : in std_logic;
+    pc_in                           : in std_logic_vector(31 downto 0);
+    instruction                     : out std_logic_vector(31 downto 0);
+    out_pc                          : out std_logic_vector(31 downto 0)
     );
 end component;
 
@@ -119,16 +119,17 @@ component branch_entity
 		beq, bne, zero, jump	:	in std_logic := '0';							         -- Sinais enviados pelo controle
 		shift26_in				: 	in std_logic_vector(25 downto 0);
 		shift32_in				:	in std_logic_vector(31 downto 0);
-		branch_out				:	out std_logic_vector(31 downto 0)
+		branch_out				:	out std_logic_vector(31 downto 0);
+		clk						:	in std_logic
 	);
 end component;
 
 component mem_dados
     port (
-        address                     : in std_logic_vector(7 downto 0);
         clock                       : in std_logic;
-        data                        : in std_logic_vector(31 downto 0);
         wren                        : in std_logic;
+        address                     : in std_logic_vector(7 downto 0);
+        data                        : in std_logic_vector(31 downto 0);
         q                           : out std_logic_vector(31 downto 0)
     );
 end component;
@@ -174,18 +175,19 @@ begin
         jump => con_jum,
         shift26_in => instruction(25 downto 0),
         shift32_in => immediate,
-		branch_out 	=> pc_in
+		  branch_out 	=> pc_in,
+		  clk				=> clk
 	 );
 
     -- instancia a memoria de instruções
     inst_mem_i1: MemMIPS
     port map (
-        clk 			=> clk,
-        clk0 			=> clk0,
-        wpc 			=> wpc,
-		pc_in  		=> pc_in,
-        instruction 	=> instruction,
-        out_pc 		=> counter_to_pc
+        clk             => clk,
+        clk0            => clk0,
+        wpc             => wpc,
+        pc_in           => pc_in,
+        instruction     => instruction,
+        out_pc      => counter_to_pc
     );
 
     -- instacia o banco de registradores
