@@ -38,7 +38,7 @@ SIGNAL funct_in : STD_LOGIC_VECTOR(5 DOWNTO 0);
 SIGNAL op_in : STD_LOGIC_VECTOR(5 DOWNTO 0);
 SIGNAL val1_in : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL val2_in : STD_LOGIC_VECTOR(31 DOWNTO 0);
-signal ovflw_out, zero_out : std_logic;
+signal ovflw_out, zero_out, jal : std_logic;
 COMPONENT controller_entity
 	PORT (
 	ovflw_out, zero_out : out std_logic;
@@ -46,7 +46,8 @@ COMPONENT controller_entity
 	funct_in : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
 	op_in : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
 	val1_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-	val2_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0)
+	val2_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	jal		: out STD_LOGIC
 	);
 END COMPONENT;
 BEGIN
@@ -59,7 +60,8 @@ BEGIN
 	val1_in => val1_in,
 	val2_in => val2_in,
 	ovflw_out => ovflw_out,
-	zero_out => zero_out
+	zero_out => zero_out,
+	jal => jal
 	);
 init : PROCESS
 -- variable declarations
@@ -70,6 +72,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_signed(1, 32));
 		val2_in <= std_logic_vector(to_signed(2, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_signed(3, 32))) report "Add failure";
 		assert(ovflw_out = '0') report "Overflow failure";
 
@@ -78,6 +81,7 @@ BEGIN
 		val1_in <= X"70000000";
 		val2_in <= X"10000000";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"80000000") report "Add failure";
 		assert(ovflw_out = '1') report "Overflow failure";
 
@@ -88,6 +92,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(1, 32));
 		val2_in <= std_logic_vector(to_unsigned(2, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(3, 32)));
 		assert(ovflw_out = '0');
 
@@ -96,6 +101,7 @@ BEGIN
 		val1_in <= X"70000000";
 		val2_in <= X"10000000";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"80000000");
 		assert(ovflw_out = '0');
 
@@ -106,6 +112,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_signed(2, 32));
 		val2_in <= std_logic_vector(to_signed(1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_signed(1, 32)));
 
 		wait for 4 ps;
@@ -115,6 +122,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(2, 32));
 		val2_in <= std_logic_vector(to_unsigned(1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(1, 32)));
 
 		wait for 4 ps;
@@ -123,6 +131,7 @@ BEGIN
 		val1_in <= X"10101010";
 		val2_in <= X"00001111";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"00001010");
 
 		wait for 4 ps;
@@ -131,6 +140,7 @@ BEGIN
 		val1_in <= X"F0F0F0F0";
 		val2_in <= X"0000FFFF";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"F0F0FFFF");
 
 		wait for 4 ps;
@@ -140,6 +150,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(0, 32));
 		val2_in <= std_logic_vector(to_unsigned(1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"00000001");
 
 		wait for 4 ps;
@@ -147,6 +158,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(0, 32));
 		val2_in <= std_logic_vector(to_signed(-1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"00000000");
 
 		wait for 4 ps;
@@ -156,6 +168,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(0, 32));
 		val2_in <= std_logic_vector(to_unsigned(1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"00000001");
 
 		wait for 4 ps;
@@ -163,6 +176,7 @@ BEGIN
 		val1_in <= X"00000001";
 		val2_in <= X"80000000";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"00000001");
 
 		wait for 4 ps;
@@ -172,6 +186,7 @@ BEGIN
 		val1_in <= X"F0F0F0F0";
 		val2_in <= X"0000FFFF";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"0F0F0000");
 
 		wait for 4 ps;
@@ -180,6 +195,7 @@ BEGIN
 		val1_in <= X"F0F0F0F0";
 		val2_in <= X"0000FFFF";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"F0F00F0F");
 
 		wait for 4 ps;
@@ -188,6 +204,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(1, 32));
 		val2_in <= std_logic_vector(to_unsigned(1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(2, 32)));
 
 		wait for 4 ps;
@@ -196,6 +213,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(1, 32));
 		val2_in <= std_logic_vector(to_unsigned(1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(0, 32)));
 
 		wait for 4 ps;
@@ -204,6 +222,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(1, 32));
 		val2_in <= std_logic_vector(to_unsigned(1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(0, 32)));
 
 		wait for 4 ps;
@@ -212,6 +231,7 @@ BEGIN
 		val1_in <= std_LOGIC_VECTOR(to_signed(4, 32));
 		val2_in <= x"AAAACCCB";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = x"AAACCCBA");
 
 		wait for 4 ps;
@@ -221,6 +241,7 @@ BEGIN
 		val1_in <= std_LOGIC_VECTOR(to_signed(4, 32));
 		val2_in <= x"AAAACCCB";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = x"BAAAACCC");
 
 		wait for 4 ps;
@@ -229,6 +250,7 @@ BEGIN
 		val1_in <= std_LOGIC_VECTOR(to_signed(0, 32));
 		val2_in <= x"0000FFFF";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = x"FFFF0000");
 
 		wait for 4 ps;
@@ -237,6 +259,7 @@ BEGIN
 		val1_in <= X"10101010";
 		val2_in <= X"00001111";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out  = X"00001010");
 
 		wait for 4 ps;
@@ -245,6 +268,7 @@ BEGIN
 		val1_in <= X"10101010";
 		val2_in <= X"00001111";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out  = X"10101111");
 
 		wait for 4 ps;
@@ -253,6 +277,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_signed(1, 32));
 		val2_in <= std_logic_vector(to_signed(2, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_signed(3, 32)));
 		assert(ovflw_out = '0');
 
@@ -261,6 +286,7 @@ BEGIN
 		val1_in <= X"70000000";
 		val2_in <= X"10000000";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"80000000");
 		assert(ovflw_out = '1');
 
@@ -270,6 +296,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(1, 32));
 		val2_in <= std_logic_vector(to_unsigned(2, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(3, 32)));
 		assert(ovflw_out = '0');
 
@@ -278,6 +305,7 @@ BEGIN
 		val1_in <= X"70000000";
 		val2_in <= X"10000000";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"80000000");
 		assert(ovflw_out = '0');
 
@@ -287,6 +315,7 @@ BEGIN
 		val1_in <= X"00000001";
 		val2_in <= X"00000001";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"00000000");
 		assert(zero_out = '1');
 
@@ -296,6 +325,7 @@ BEGIN
 		val1_in <= X"00000001";
 		val2_in <= X"00000001";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"00000000");
 		assert(zero_out = '1');
 
@@ -305,6 +335,7 @@ BEGIN
 		val1_in <= std_LOGIC_VECTOR(to_signed(0, 32));
 		val2_in <= x"0000FFFF";
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = x"FFFF0000");
 
 		wait for 4 ps;
@@ -313,6 +344,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(1, 32));
 		val2_in <= std_logic_vector(to_unsigned(2, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(3, 32)));
 		assert(ovflw_out = '0');
 
@@ -322,6 +354,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(0, 32));
 		val2_in <= std_logic_vector(to_unsigned(1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"00000001");
 
 		wait for 4 ps;
@@ -329,6 +362,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(0, 32));
 		val2_in <= std_logic_vector(to_signed(-1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = X"00000000");
 
 		wait for 4 ps;
@@ -337,6 +371,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(1, 32));
 		val2_in <= std_logic_vector(to_unsigned(2, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(3, 32)));
 		assert(ovflw_out = '0');
 
@@ -344,6 +379,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(1, 32));
 		val2_in <= std_logic_vector(to_unsigned(1, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(0, 32)));
 		assert(ovflw_out = '0');
 
@@ -351,6 +387,7 @@ BEGIN
 		val1_in <= std_logic_vector(to_unsigned(1, 32));
 		val2_in <= std_logic_vector(to_unsigned(0, 32));
 		wait for 4 ps;
+		assert(jal = '0') report "jal failure";
 		assert(entity_out = std_logic_vector(to_unsigned(1, 32)));
 		assert(ovflw_out = '0');
 
