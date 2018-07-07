@@ -31,20 +31,24 @@ begin
         case ULA_OP is
             when ADD    => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B)); overflow <= (A(31) xnor B(31)) and (A(31) xor resultado32(31));
             when ADDU   => resultado32 <= std_logic_vector(unsigned(A) + unsigned(B));
-            when SUB        => resultado32 <= tmp; overflow <=  (B(31) and resultado32(31));
+            when SUB    => resultado32 <= tmp; overflow <=  (B(31) and resultado32(31));
             when SUBU   => resultado32 <= tmp;
             when AND_OP => resultado32 <= A and B;
             when OR_OP  =>  resultado32 <= A or B;
             when XOR_OP => resultado32 <= A xor B;
             when NOR_OP => resultado32 <= A nor B;
-            when SLT        => resultado32 <= (0 => tmp(31), others => '0');
-            when SLTU   => resultado32 <= (0 => tmp(31), others => '0');
+            when SLT    => resultado32 <= (0 => tmp(31), others => '0');
+            when SLTU   =>
+					if (unsigned(A) < unsigned(B))
+						then resultado32 <= x"00000001";
+						else resultado32 <= x"00000000";
+					end if;
             when SLL_OP => resultado32 <= std_logic_vector(unsigned(B) sll to_integer(unsigned(shift_amount)));   
             when SRL_OP => resultado32 <= std_logic_vector(unsigned(B) srl to_integer(unsigned(shift_amount)));
-            when RTL        => resultado32 <= std_logic_vector(unsigned(B) rol to_integer(unsigned(A)));
-            when RTR        => resultado32 <= std_logic_vector(unsigned(B) ror to_integer(unsigned(A)));
+            when RTL    => resultado32 <= std_logic_vector(unsigned(B) rol to_integer(unsigned(A)));
+            when RTR    => resultado32 <= std_logic_vector(unsigned(B) ror to_integer(unsigned(A)));
             when SRA_OP => resultado32 <= to_stdlogicvector(to_bitvector(B) sra to_integer(unsigned(shift_amount)));
-            when LUI        => resultado32 <= std_logic_vector(unsigned(B) sll 16);
+            when LUI    => resultado32 <= std_logic_vector(unsigned(B) sll 16);
             when others => resultado32 <= (others => '0');
         end case;           
     end process;
