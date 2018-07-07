@@ -21,7 +21,8 @@ entity controller_entity is
         op_in, funct_in     : in std_logic_vector(5 downto 0);
         val1_in, val2_in    : in std_logic_vector(31 downto 0);
         entity_out          : out std_logic_vector(31 downto 0);
-        ovflw_out, zero_out : out std_logic   
+        ovflw_out, zero_out : out std_logic;
+        jal                 : out std_logic
     );
 end entity;
 
@@ -40,7 +41,8 @@ architecture controller_entity_arch of controller_entity is
         port (
             aluop	:	in	std_logic_vector(3 downto 0);
             funct	:	in 	std_logic_vector(5 downto 0);
-            ulasin	:	out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃ§Ã£o
+            ulasin	:	out ULA_OPERATION; -- 4 bits: consultar ula_package para a instruÃ§Ã£o
+            jal                 : out std_logic
         );
     end component;
 
@@ -80,7 +82,8 @@ architecture controller_entity_arch of controller_entity is
             port map(
                 aluop => control_out,
                 funct => funct_in,
-                ulasin => alucontrol_out
+                ulasin => alucontrol_out,
+                jal => jal
             );
         ula_i1: ula
             port map(
