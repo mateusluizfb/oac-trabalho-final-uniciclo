@@ -38,11 +38,14 @@ SIGNAL eret : STD_LOGIC;
 SIGNAL beq : STD_LOGIC;
 SIGNAL bne : STD_LOGIC;
 SIGNAL jump : STD_LOGIC;
+SIGNAL jal : STD_LOGIC;
+SIGNAL jr : STD_LOGIC;
 SIGNAL zero : STD_LOGIC;
 SIGNAL pc_value : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL shift26_in : STD_LOGIC_VECTOR(25 DOWNTO 0);
 SIGNAL shift32_in : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL branch_out : STD_LOGIC_VECTOR(31 DOWNTO 0);
+signal rs_address : std_logic_vector(31 downto 0);
 
 constant CLK_PERIOD : time := 100 ps;
 constant CLK0_PERIOD : time := 10 ps;
@@ -53,12 +56,15 @@ COMPONENT branch_entity
     beq : IN STD_LOGIC;
     bne : IN STD_LOGIC;
     branch_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+    jal : IN STD_LOGIC;
+    jr : IN STD_LOGIC;
     jump : IN STD_LOGIC;
     ovfl : IN STD_LOGIC;
     eret : IN STD_LOGIC;
     pc_value : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     shift26_in : IN STD_LOGIC_VECTOR(25 DOWNTO 0);
     shift32_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    rs_address : in std_logic_vector(31 downto 0);
     zero : IN STD_LOGIC
     );
 END COMPONENT;
@@ -73,9 +79,12 @@ BEGIN
     bne => bne,
     branch_out => branch_out,
     jump => jump,
+    jal => jal,
+    jr => jr,
     pc_value => pc_value,
     shift26_in => shift26_in,
     shift32_in => shift32_in,
+    rs_address => rs_address,
     zero => zero
     );
 
@@ -93,6 +102,7 @@ BEGIN
         -- code that executes only once 
           
     -- Passa o valor do pc + 4 direto pra saída
+    rs_address <= x"0000CFA0";
     wait for 50 ps;
     pc_value   <= x"0000CFA0";
     wait for 50 ps;
@@ -102,6 +112,8 @@ BEGIN
     ovfl          <= '0';
     eret          <= '0';
     zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '0';
     shift26_in <= "00" & x"000000";
     shift32_in <= x"00000000";
@@ -115,6 +127,8 @@ BEGIN
     ovfl          <= '0';
     eret          <= '0';
     zero          <= '1';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '0';
     shift26_in <= "00" & x"000000";
     shift32_in <= x"0000000C";
@@ -129,6 +143,8 @@ BEGIN
     ovfl          <= '0';
     eret          <= '0';
     zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '1';
     shift26_in <= "00" & x"000C0C";
     shift32_in <= x"00000000";
@@ -143,6 +159,8 @@ BEGIN
     ovfl          <= '0';
     eret          <= '0';
     zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '0';
     shift26_in <= "00" & x"000C0C";
     shift32_in <= x"00000000";
@@ -157,6 +175,8 @@ BEGIN
     ovfl          <= '1';
     eret          <= '0';
     zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '0';
     shift26_in <= "00" & x"000C0C";
     shift32_in <= x"00000000";
@@ -171,6 +191,8 @@ BEGIN
     ovfl          <= '0';
     eret          <= '0';
     zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '0';
     shift26_in <= "00" & x"000C0C";
     shift32_in <= x"00000000";
@@ -185,6 +207,8 @@ BEGIN
     ovfl          <= '0';
     eret          <= '1';
     zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '0';
     shift26_in <= "00" & x"000C0C";
     shift32_in <= x"00000000";
@@ -199,6 +223,8 @@ BEGIN
     ovfl          <= '0';
     eret          <= '0';
     zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '0';
     shift26_in <= "00" & x"000C0C";
     shift32_in <= x"00000000";
@@ -213,6 +239,8 @@ BEGIN
     ovfl          <= '0';
     eret          <= '0';
     zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '0';
     shift26_in <= "00" & x"000C0C";
     shift32_in <= x"00000C0C";
@@ -227,12 +255,83 @@ BEGIN
     ovfl          <= '0';
     eret          <= '0';
     zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
     jump          <= '0';
     shift26_in <= "00" & x"000C0C";
     shift32_in <= x"00000000";
     wait for 50 ps;
     pc_value   <= branch_out;
     assert (branch_out = x"00006074");
+
+    -- jal
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jr            <= '0';
+    jal           <= '1';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    rs_address <= pc_value;
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00003030");
+
+    -- no jump
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    --rs_address <= pc_value;
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00003034");
+
+    -- jr $ra
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jr            <= '1';
+    jal           <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    --rs_address <= pc_value;
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00006074");
+
+    -- jr $ra
+    wait for 50 ps;
+    beq           <= '0';
+    bne           <= '0';
+    ovfl          <= '0';
+    eret          <= '0';
+    zero          <= '0';
+    jr            <= '0';
+    jal           <= '0';
+    jump          <= '0';
+    shift26_in <= "00" & x"000C0C";
+    shift32_in <= x"00000000";
+    --rs_address <= pc_value;
+    wait for 50 ps;
+    pc_value   <= branch_out;
+    assert (branch_out = x"00006078");
+
     wait for 100 ps;
 WAIT;
 END PROCESS init;
