@@ -185,7 +185,8 @@ begin
         bne => con_bne,
         zero => zeroUla,
         jump => con_jum,
-        jal => jal,
+        jal => con_jal,
+        jr => con_jr,
         pc_value    => counter_to_pc,
         rs_address  => r2,
         shift26_in => instruction(25 downto 0),
@@ -232,7 +233,7 @@ begin
     mux_reg_dst_i2: mux
     generic map (WSIZE => 5)
     port map (
-        sel => jal,
+        sel => con_jal,
         input0 => reg_rd_rt_out,
         input1 => register_ra,
         output1 => reg_dst_out
@@ -284,7 +285,7 @@ begin
 
     mux_jal_i1: mux
     port map (
-        sel => jal,
+        sel => con_jal,
         input0 => Z_md_data,
         input1 => counter_to_pc,
         output1 => write_data_breg 
