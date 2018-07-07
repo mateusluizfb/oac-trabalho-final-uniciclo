@@ -104,6 +104,7 @@ component ula
         A                           : in std_logic_vector(31 downto 0);
         B                           : in std_logic_vector(31 downto 0);
         ula_op                      : in ULA_OPERATION;
+		  shift_amount						: in std_logic_vector(4 downto 0);
         ula_out                     : out std_logic_vector(31 downto 0);
         zero                        : out std_logic;
         overflow                    : out std_logic
@@ -238,6 +239,7 @@ begin
         A => r1,
         B => ula_dst,
         ula_op => ula_op,
+		  shift_amount => instruction(10 downto 6), -- a quantidade de shift fica no lugar do 'rd'
         ula_out => Z,
         zero => zeroUla,
         overflow => ovfl

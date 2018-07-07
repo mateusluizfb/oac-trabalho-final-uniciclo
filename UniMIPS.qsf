@@ -94,7 +94,11 @@ set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME controle_tb -section_id c
 set_global_assignment -name EDA_TEST_BENCH_NAME controller_entity_tb -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_NAME controle_tb -section_id eda_simulation
 set_global_assignment -name LAST_QUARTUS_VERSION "18.0.0 Lite Edition"
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -entity controller_entity -section_id Top
 set_global_assignment -name SOURCE_FILE db/UniMIPS.cmp.rdb
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -entity controller_entity -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -entity controller_entity -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -entity controller_entity -section_id Top
 set_global_assignment -name TOP_LEVEL_ENTITY UniMIPS
 set_global_assignment -name VHDL_FILE controleULA.vhd
 set_global_assignment -name VHDL_FILE controle.vhd
