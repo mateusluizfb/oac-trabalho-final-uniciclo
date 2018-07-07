@@ -50,7 +50,7 @@ begin
             when SRA_OP => resultado32 <= to_stdlogicvector(to_bitvector(B) sra to_integer(unsigned(shift_amount)));
             when LUI    => resultado32 <= std_logic_vector(unsigned(B) sll 16);
             when others => resultado32 <= (others => '0');
-        end case;           
+        end case;
     end process;
 
 end architecture; 

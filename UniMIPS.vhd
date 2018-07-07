@@ -30,6 +30,8 @@ entity UniMIPS is
     debug_jump                : out std_logic;
     debug_beq                 : out std_logic;
     debug_bne                 : out std_logic;
+    debug_jr                  : out std_logic;
+    debug_jal                 : out std_logic;
     debug_memread              : out std_logic;
     debug_memtoreg          : out std_logic;
     debug_memwrite          : out std_logic;
@@ -66,6 +68,7 @@ signal mux_reg_dst, ula_sel, wren_md: std_logic;
 signal ula_op : ULA_OPERATION;
 signal controleULA_op : std_logic_vector(3 downto 0);
 signal con_jum, con_bne, con_beq : std_logic;
+signal con_jr, con_jal : std_logic;
 signal zeroUla : std_logic;
 
 component MemMIPS
@@ -104,7 +107,7 @@ component ula
         A                           : in std_logic_vector(31 downto 0);
         B                           : in std_logic_vector(31 downto 0);
         ula_op                      : in ULA_OPERATION;
-		  shift_amount						: in std_logic_vector(4 downto 0);
+        shift_amount                : in std_logic_vector(4 downto 0);
         ula_out                     : out std_logic_vector(31 downto 0);
         zero                        : out std_logic;
         overflow                    : out std_logic
@@ -144,7 +147,7 @@ end component;
 component controle is
     port (
         opcode                          : in std_logic_vector(5 downto 0);
-        regdst, jump, beq, bne          : out std_logic;
+        regdst, jump, beq, bne, jal     : out std_logic;
         memread, memtoreg, memwrite     : out std_logic;
         alusrc, regwrite                : out std_logic;
         aluop                           : out std_logic_vector(3 downto 0)
@@ -155,6 +158,7 @@ component controleULA is
     port (
         aluop   :   in  std_logic_vector(3 downto 0);
         funct   :   in  std_logic_vector(5 downto 0);
+        jr      :   out std_logic;
         ulasin  :   out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃ§Ã£o
     );
 end component;
@@ -239,7 +243,7 @@ begin
         A => r1,
         B => ula_dst,
         ula_op => ula_op,
-		  shift_amount => instruction(10 downto 6), -- a quantidade de shift fica no lugar do 'rd'
+        shift_amount => instruction(10 downto 6), -- a quantidade de shift fica no lugar do 'rd'
         ula_out => Z,
         zero => zeroUla,
         overflow => ovfl
@@ -298,6 +302,8 @@ begin
     debug_alusrc                <= ula_sel;
     debug_regwrite              <= wren_breg;
     debug_aluop                 <= controleULA_op;
+    debug_jal                   <= con_jal;
+    debug_jr                    <= con_jr;
 
     controle_i1: controle
     port map (
@@ -310,6 +316,7 @@ begin
         memtoreg => wb_sin,
         memwrite => wren_md,
         alusrc => ula_sel,
+        jal => con_jal,
         regwrite => wren_breg,
         aluop => controleULA_op
     );
@@ -318,6 +325,7 @@ begin
     port map (
         aluop => controleULA_op,
         funct => instruction(5 downto 0),
+        jr => con_jr,
         ulasin => ula_op
     );
 

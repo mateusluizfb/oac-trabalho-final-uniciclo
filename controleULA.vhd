@@ -20,7 +20,7 @@ entity controleULA is
         aluop   :   in  std_logic_vector(3 downto 0);
         funct   :   in  std_logic_vector(5 downto 0);
         ulasin  :   out ULA_OPERATION; -- 4 bits: consultar ula_package para a instruÃ§Ã£o
-        jal     :   out std_logic
+        jr      :   out std_logic
     );
 end entity;
 
@@ -28,7 +28,7 @@ architecture controleULA_arch of controleULA is
     begin
         init: process(aluop, funct)
         begin
-            jal <= '0';
+            jr <= '0';
             case aluop is   -- no caso de uma operação tipo r
                 when "0000" =>
                     case funct is
@@ -64,8 +64,8 @@ architecture controleULA_arch of controleULA is
                             ulasin <= RTR;
                         when "111101" => -- lui(?)
                             ulasin <= LUI;
-                        when "001000" => -- jal
-                            jal <= '1';
+                        when "001000" => -- jr
+                            jr <= '1';
                             ulasin <= SLL_OP;
                         when others   => -- operacao nao implementada na ula
                             ulasin <= SLL_OP;
