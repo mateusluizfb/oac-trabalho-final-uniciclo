@@ -12,24 +12,30 @@ entity UniMIPS is
     r2_out                          : out std_logic_vector(31 downto 0);
     r1_read                         : out std_logic_vector(4 downto 0);
     r2_read                         : out std_logic_vector(4 downto 0);
-    --reg_input_write                 : in std_logic_vector(4 downto 0);
-    -- sinais de controle
-    wb_sin                          : in std_logic;
-    wren_breg                       : in std_logic;
-    mux_sin                         : in std_logic;
-    mux_reg_dst                     : in std_logic;
-    wpc                             : in std_logic;
-    ula_sel                         : in std_logic;
-    ula_op                          : in ULA_OPERATION;
-    wren_md                         : in std_logic;
+
     --*sinais de controle
+    wpc                             : in std_logic;
     -- sinal de entrada breg
     zero                            : out std_logic;
     ovfl                            : out std_logic;
     instruction_out                 : out std_logic_vector(31 downto 0);
     inst_counter                    : out std_logic_vector(31 downto 0);
     alu_out                         : out std_logic_vector(31 downto 0);
-    md_out                          : out std_logic_vector(31 downto 0)
+    md_out                          : out std_logic_vector(31 downto 0);
+
+    -- sinal de debug do controle
+    debug_controle_opcode   : out std_logic_vector(5 downto 0);
+    debug_ULA_funct              : out std_logic_vector(5 downto 0);
+    debug_mux_reg_dst        : out std_logic;
+    debug_jump                : out std_logic;
+    debug_beq                 : out std_logic;
+    debug_bne                 : out std_logic;
+    debug_memread              : out std_logic;
+    debug_memtoreg          : out std_logic;
+    debug_memwrite          : out std_logic;
+    debug_alusrc                : out std_logic;
+    debug_regwrite           : out std_logic;
+    debug_aluop             : out std_logic_vector(3 downto 0)
     );
 end entity ; -- UniMIPS
 
@@ -55,6 +61,12 @@ signal Z: std_logic_vector(31 downto 0);
 signal pc_in: std_logic_vector(31 downto 0);
 signal counter_to_pc: std_logic_vector(31 downto 0);
 signal Z_md_data: std_logic_vector(31 downto 0);
+signal wb_sin, wren_breg, mux_sin, mread : std_logic;
+signal mux_reg_dst, ula_sel, wren_md: std_logic;
+signal ula_op : ULA_OPERATION;
+signal controleULA_op : std_logic_vector(3 downto 0);
+signal con_jum, con_bne, con_beq : std_logic;
+signal zeroUla : std_logic;
 
 component MemMIPS
     port (
@@ -65,7 +77,7 @@ component MemMIPS
     );
 end component;
 
-component breg 
+component breg
     port (
     clock, write_enable, reset      : in  std_logic;
     register_input_1                : in  std_logic_vector(4 downto 0);
@@ -128,6 +140,24 @@ component mem_dados
     );
 end component;
 
+component controle is
+    port (
+        opcode                          : in std_logic_vector(5 downto 0);
+        regdst, jump, beq, bne          : out std_logic;
+        memread, memtoreg, memwrite     : out std_logic;
+        alusrc, regwrite                : out std_logic;
+        aluop                           : out std_logic_vector(3 downto 0)
+    );
+end component;
+
+component controleULA is
+    port (
+        aluop   :   in  std_logic_vector(3 downto 0);
+        funct   :   in  std_logic_vector(5 downto 0);
+        ulasin  :   out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃ§Ã£o
+    );
+end component;
+
 begin
 
     instruction_out <= instruction;
@@ -139,15 +169,22 @@ begin
     alu_out <= Z;
     inst_counter <= counter_to_pc;
     register_ra <= "11111";
+    zero <= zeroUla;
 
     -- instancia o component de jump e pc + 4
     -- TODO: Quando fazer o controle mapear os sinais dos branchs e jumps
     branch_component_i1: branch_entity
     port map (
         clk => clk,
+        beq => con_beq,
+        bne => con_bne,
+        zero => zeroUla,
+        jump => con_jum,
         jal => jal,
         pc_value    => counter_to_pc,
         rs_address  => r2,
+        shift26_in => instruction(25 downto 0),
+        shift32_in => immediate,
         branch_out  => pc_in
     );
 
@@ -193,7 +230,6 @@ begin
         sel => jal,
         input0 => reg_rd_rt_out,
         input1 => register_ra,
-        --input1 => reg_input_write,
         output1 => reg_dst_out
     );
 
@@ -203,7 +239,7 @@ begin
         B => ula_dst,
         ula_op => ula_op,
         ula_out => Z,
-        zero => zero,
+        zero => zeroUla,
         overflow => ovfl
     );
 
@@ -246,6 +282,41 @@ begin
         input0 => Z_md_data,
         input1 => counter_to_pc,
         output1 => write_data_breg 
+    );
+
+    debug_controle_opcode       <= instruction(31 downto 26);
+    debug_ULA_funct             <= instruction(5 downto 0);
+    debug_mux_reg_dst           <= mux_reg_dst;
+    debug_jump                  <= con_jum;
+    debug_beq                   <= con_beq;
+    debug_bne                   <= con_bne;
+    debug_memread               <= mread;
+    debug_memtoreg              <= wb_sin;
+    debug_memwrite              <= wren_md;
+    debug_alusrc                <= ula_sel;
+    debug_regwrite              <= wren_breg;
+    debug_aluop                 <= controleULA_op;
+
+    controle_i1: controle
+    port map (
+        opcode => instruction(31 downto 26),
+        regdst => mux_reg_dst,
+        jump => con_jum,
+        beq => con_beq,
+        bne => con_bne,
+        memread => mread,
+        memtoreg => wb_sin,
+        memwrite => wren_md,
+        alusrc => ula_sel,
+        regwrite => wren_breg,
+        aluop => controleULA_op
+    );
+
+    controleULA_i1: controleULA
+    port map (
+        aluop => controleULA_op,
+        funct => instruction(5 downto 0),
+        ulasin => ula_op
     );
 
 end architecture ; -- arch
