@@ -53,7 +53,7 @@ component UniMIPS
     wpc                             : in std_logic;
     -- sinal de entrada breg
     zero                            : out std_logic;
-    ovfl                            : out std_logic;
+    debug_ovfl                            : out std_logic;
     instruction_out                 : out std_logic_vector(31 downto 0);
     inst_counter                    : out std_logic_vector(31 downto 0);
     alu_out                         : out std_logic_vector(31 downto 0);
@@ -98,7 +98,7 @@ begin
     --*sinais de controle
     -- sinal de entrada breg
     zero => zero,
-    ovfl => ovfl,
+    debug_ovfl => ovfl,
     instruction_out => instruction_out,
     inst_counter    => inst_counter,
     alu_out => alu_out,

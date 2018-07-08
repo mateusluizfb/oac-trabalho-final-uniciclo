@@ -163,7 +163,7 @@ component controleULA is
         aluop   :   in  std_logic_vector(3 downto 0);
         funct   :   in  std_logic_vector(5 downto 0);
         jr      :   out std_logic;
-        ulasin  :   out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃ§Ã£o
+        ulasin  :   out ULA_OPERATION -- 4 bits: consultar ula_package para a instruÃƒÂ§ÃƒÂ£o
     );
 end component;
 
@@ -195,13 +195,13 @@ begin
         ovfl => con_ovfl,
         eret => con_eret,
         pc_value    => counter_to_pc,
-        rs_address  => r2,
+        rs_address  => r1,
         shift26_in => instruction(25 downto 0),
         shift32_in => immediate,
         branch_out  => pc_in
     );
 
-    -- instancia a memoria de instruções
+    -- instancia a memoria de instruÃ§Ãµes
     inst_mem_i1: MemMIPS
     port map (
         clk             => clk,
