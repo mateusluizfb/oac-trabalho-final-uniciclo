@@ -34,6 +34,7 @@ signal debug_regwrite			 : std_logic;
 signal debug_aluop             : std_logic_vector(3 downto 0);
 signal debug_jal             	 : std_logic;
 signal debug_jr                : std_logic;
+signal debug_eret                : std_logic;
 
 
 constant CLK_PERIOD : time := 100 ps;
@@ -64,8 +65,9 @@ component UniMIPS
 	 debug_ULA_funct 			 : out std_logic_vector(5 downto 0);
 	 debug_mux_reg_dst		 : out std_logic;
 	 debug_jump		          : out std_logic;
-	 debug_beq		          : out std_logic;
-	 debug_bne		          : out std_logic;
+     debug_beq                : out std_logic;
+     debug_bne                : out std_logic;
+	 debug_eret		          : out std_logic;
 	 debug_memread		       : out std_logic;
 	 debug_memtoreg		    : out std_logic;
 	 debug_memwrite		    : out std_logic;
@@ -119,7 +121,8 @@ begin
 		 debug_regwrite			 => debug_regwrite,
 		 debug_aluop             => debug_aluop,
 		 debug_jal					 => debug_jal,
-		 debug_jr					 => debug_jr
+         debug_jr                    => debug_jr,
+		 debug_eret					 => debug_eret
     );
 
 
