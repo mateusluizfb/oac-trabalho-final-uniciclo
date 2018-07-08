@@ -180,6 +180,7 @@ begin
     register_ra <= std_logic_vector(to_unsigned(31, 5));
     zero <= zeroUla;
     debug_ovfl <= con_ovfl;
+    debug_eret <= con_eret;
 
     -- instancia o component de jump e pc + 4
     -- TODO: Quando fazer o controle mapear os sinais dos branchs e jumps
