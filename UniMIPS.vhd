@@ -17,7 +17,7 @@ entity UniMIPS is
     wpc                             : in std_logic;
     -- sinal de entrada breg
     zero                            : out std_logic;
-    ovfl                            : out std_logic;
+    debug_ovfl                            : out std_logic;
     instruction_out                 : out std_logic_vector(31 downto 0);
     inst_counter                    : out std_logic_vector(31 downto 0);
     alu_out                         : out std_logic_vector(31 downto 0);
@@ -31,6 +31,7 @@ entity UniMIPS is
     debug_beq                 : out std_logic;
     debug_bne                 : out std_logic;
     debug_jr                  : out std_logic;
+    debug_eret                : out std_logic;
     debug_jal                 : out std_logic;
     debug_memread              : out std_logic;
     debug_memtoreg          : out std_logic;
@@ -68,7 +69,8 @@ signal mux_reg_dst, ula_sel, wren_md: std_logic;
 signal ula_op : ULA_OPERATION;
 signal controleULA_op : std_logic_vector(3 downto 0);
 signal con_jum, con_bne, con_beq : std_logic;
-signal con_jr, con_jal : std_logic;
+signal con_jr, con_jal, con_ovfl : std_logic;
+signal con_eret : std_logic;
 signal zeroUla : std_logic;
 
 component MemMIPS
@@ -127,6 +129,7 @@ component branch_entity
         pc_value                    : in std_logic_vector(31 downto 0) := x"00000000"; -- Sinais de entrada do pc
         beq, bne, zero              : in std_logic := '0';
         jump, jr, jal               : in std_logic := '0';                             -- Sinais enviados pelo controle
+        ovfl, eret                  : in std_logic := '0';
         shift26_in                  : in std_logic_vector(25 downto 0) := "00" & x"000000";
         shift32_in                  : in std_logic_vector(31 downto 0) := x"00000000";
         rs_address                  : in std_logic_vector(31 downto 0);
@@ -149,7 +152,7 @@ component controle is
         opcode                          : in std_logic_vector(5 downto 0);
         regdst, jump, beq, bne, jal     : out std_logic;
         memread, memtoreg, memwrite     : out std_logic;
-        alusrc, regwrite                : out std_logic;
+        alusrc, regwrite, eret          : out std_logic;
         aluop                           : out std_logic_vector(3 downto 0)
     );
 end component;
@@ -175,6 +178,7 @@ begin
     inst_counter <= counter_to_pc;
     register_ra <= "11111";
     zero <= zeroUla;
+    debug_ovfl <= con_ovfl;
 
     -- instancia o component de jump e pc + 4
     -- TODO: Quando fazer o controle mapear os sinais dos branchs e jumps
@@ -187,6 +191,8 @@ begin
         jump => con_jum,
         jal => con_jal,
         jr => con_jr,
+        ovfl => con_ovfl,
+        eret => con_eret,
         pc_value    => counter_to_pc,
         rs_address  => r2,
         shift26_in => instruction(25 downto 0),
@@ -247,7 +253,7 @@ begin
         shift_amount => instruction(10 downto 6), -- a quantidade de shift fica no lugar do 'rd'
         ula_out => Z,
         zero => zeroUla,
-        overflow => ovfl
+        overflow => con_ovfl
     );
 
     mux_ula_i1: mux
@@ -318,6 +324,7 @@ begin
         memwrite => wren_md,
         alusrc => ula_sel,
         jal => con_jal,
+        eret => con_eret,
         regwrite => wren_breg,
         aluop => controleULA_op
     );
