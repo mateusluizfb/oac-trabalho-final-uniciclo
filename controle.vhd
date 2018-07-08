@@ -20,7 +20,7 @@ entity controle is
 		opcode						    : in std_logic_vector(5 downto 0);
 		regdst, jump, beq, bne, jal     : out std_logic;
 		memread, memtoreg, memwrite 	: out std_logic;
-		alusrc, regwrite            	: out std_logic;
+		alusrc, regwrite, eret       	: out std_logic;
 		aluop							: out std_logic_vector(3 downto 0)
 	);
 end entity;
@@ -40,6 +40,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "001100"	=> -- ANDI
@@ -52,6 +53,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "001101"	=> -- ORI
@@ -64,6 +66,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "001000"	=> -- ADDI
@@ -76,6 +79,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "001110"	=> -- XORI
@@ -88,6 +92,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "001001"	=> -- ADDIU
@@ -100,6 +105,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "000100"	=> -- BEQ
@@ -112,6 +118,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '1';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "000101"	=> -- BNE
@@ -124,6 +131,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '1';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "000010"	=> -- J
@@ -136,6 +144,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '1';
 			when "000011"	=> -- JAL
@@ -148,6 +157,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '1';
 				jump <= '0';
 			when "001111"	=> -- LUI
@@ -160,6 +170,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "100011"	=> -- LW
@@ -172,6 +183,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "001010"	=> -- SLTI
@@ -184,6 +196,7 @@ begin
 				memwrite <= '0';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
 			when "101011"	=> -- SW
@@ -196,6 +209,20 @@ begin
 				memwrite <= '1';
 				beq 		<= '0';
 				bne		<= '0';
+				eret 	 <= '0';
+				jal 	 <= '0';
+				jump <= '0';
+			when "100001"	=> -- ERET
+				aluop 	<= "0010";
+				regdst 	<= '0';
+				alusrc 	<= '0';
+				memtoreg <= '0';
+				regwrite <= '0';
+				memread 	<= '0';
+				memwrite <= '0';
+				beq 		<= '0';
+				bne		<= '0';
+				eret 	 <= '1';
 				jal 	 <= '0';
 				jump <= '0';
 			when others =>  		-- Operacao nao implementada
@@ -208,6 +235,7 @@ begin
 				memwrite <= '-';
 				beq		 <= '-';
 				bne		 <= '-';
+				eret 	 <= '-';
 				jal 	 <= '-';
 				jump <= '-';
 		end case;
