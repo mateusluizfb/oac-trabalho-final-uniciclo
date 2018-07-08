@@ -70,6 +70,7 @@ signal controleULA_op : std_logic_vector(3 downto 0);
 signal con_jum, con_bne, con_beq : std_logic;
 signal con_jr, con_jal : std_logic;
 signal zeroUla : std_logic;
+signal jal_pc_4 : std_logic_vector(31 downto 0); 
 
 component MemMIPS
     port (
@@ -173,7 +174,7 @@ begin
     md_out <=  md_read_data;
     alu_out <= Z;
     inst_counter <= counter_to_pc;
-    register_ra <= "11111";
+    register_ra <= std_logic_vector(to_unsigned(31, 5));
     zero <= zeroUla;
 
     -- instancia o component de jump e pc + 4
@@ -283,11 +284,13 @@ begin
         output1 => Z_md_data
     );
 
+	 jal_pc_4 <= std_logic_vector(unsigned(counter_to_pc) + 4);
+	 
     mux_jal_i1: mux
     port map (
         sel => con_jal,
         input0 => Z_md_data,
-        input1 => counter_to_pc,
+        input1 => jal_pc_4,
         output1 => write_data_breg 
     );
 

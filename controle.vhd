@@ -143,7 +143,7 @@ begin
 				regdst 	<= '1';
 				alusrc 	<= '0';
 				memtoreg <= '0';
-				regwrite <= '0';
+				regwrite <= '1';
 				memread 	<= '0';
 				memwrite <= '0';
 				beq 		<= '0';
