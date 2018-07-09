@@ -65,15 +65,15 @@ architecture branch_entity_arch of branch_entity is
     signal shift32_out  :   std_logic_vector(31 downto 0);
     signal mux1_out     :   std_logic_vector(31 downto 0);
     signal mux_branch_out:  std_logic_vector(31 downto 0);
-    signal mux_epc      :  std_logic_vector(31 downto 0);
-    signal epc_address  :  std_logic_vector(31 downto 0);
-    signal recover_address:  std_logic_vector(31 downto 0);
+    signal mux_epc      :   std_logic_vector(31 downto 0);
+    signal epc_address  :   std_logic_vector(31 downto 0);
+    signal recover_address: std_logic_vector(31 downto 0);
     signal mux1_sel     :   std_logic;
     signal jump_jal     :   std_logic;
     signal mux2_in      :   std_logic_vector(31 downto 0);
     signal mux_eret     :   std_logic_vector(31 downto 0);
-    signal pc_4_out     :  std_logic_vector(31 downto 0);
-    signal pc_4         :  std_logic_vector(31 downto 0);
+    signal pc_4_out     :   std_logic_vector(31 downto 0);
+    signal pc_4         :   std_logic_vector(31 downto 0);
 
 
     begin

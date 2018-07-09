@@ -24,21 +24,21 @@ entity UniMIPS is
     md_out                          : out std_logic_vector(31 downto 0);
 
     -- sinal de debug do controle
-    debug_controle_opcode   : out std_logic_vector(5 downto 0);
-    debug_ULA_funct              : out std_logic_vector(5 downto 0);
-    debug_mux_reg_dst        : out std_logic;
-    debug_jump                : out std_logic;
-    debug_beq                 : out std_logic;
-    debug_bne                 : out std_logic;
-    debug_jr                  : out std_logic;
-    debug_eret                : out std_logic;
-    debug_jal                 : out std_logic;
-    debug_memread              : out std_logic;
-    debug_memtoreg          : out std_logic;
-    debug_memwrite          : out std_logic;
-    debug_alusrc                : out std_logic;
-    debug_regwrite           : out std_logic;
-    debug_aluop             : out std_logic_vector(3 downto 0)
+    debug_controle_opcode           : out std_logic_vector(5 downto 0);
+    debug_ULA_funct                 : out std_logic_vector(5 downto 0);
+    debug_mux_reg_dst               : out std_logic;
+    debug_jump                      : out std_logic;
+    debug_beq                       : out std_logic;
+    debug_bne                       : out std_logic;
+    debug_jr                        : out std_logic;
+    debug_eret                      : out std_logic;
+    debug_jal                       : out std_logic;
+    debug_memread                   : out std_logic;
+    debug_memtoreg                  : out std_logic;
+    debug_memwrite                  : out std_logic;
+    debug_alusrc                    : out std_logic;
+    debug_regwrite                  : out std_logic;
+    debug_aluop                     : out std_logic_vector(3 downto 0)
     );
 end entity ; -- UniMIPS
 
@@ -180,6 +180,7 @@ begin
     register_ra <= std_logic_vector(to_unsigned(31, 5));
     zero <= zeroUla;
     debug_ovfl <= con_ovfl;
+    debug_eret <= con_eret;
 
     -- instancia o component de jump e pc + 4
     -- TODO: Quando fazer o controle mapear os sinais dos branchs e jumps

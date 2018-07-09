@@ -212,7 +212,7 @@ begin
 				eret 	 <= '0';
 				jal 	 <= '0';
 				jump <= '0';
-			when "100001"	=> -- ERET
+			when "010000"	=> -- ERET
 				aluop 	<= "0010";
 				regdst 	<= '0';
 				alusrc 	<= '0';
