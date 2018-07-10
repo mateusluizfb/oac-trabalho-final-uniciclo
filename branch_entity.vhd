@@ -80,7 +80,7 @@ architecture branch_entity_arch of branch_entity is
         mux1_sel <= ((bne and not(zero)) xor (beq and zero));
         mux2_in <=  pc_4_out(31 downto 28) & shift26_out;
         pc_4 <= std_logic_vector(to_unsigned(4, 32));
-        recover_address <= X"00004380";
+        recover_address <= X"00004180";
         jump_jal <= jump or jal;
 
         somador_pc_4_i2: somador
