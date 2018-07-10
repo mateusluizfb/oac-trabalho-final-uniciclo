@@ -187,12 +187,12 @@ BEGIN
 	assert(regdst = '1');
 	assert(alusrc = '0');
 	assert(memtoreg = '0');
-	assert(regwrite = '0');
+	assert(regwrite = '1');
 	assert(memread  = '0');
 	assert(memwrite = '0');
 	assert(beq = '0');
 	assert(bne	= '0');
-	assert(jump	= '1');
+	assert(jump	= '0');
 
 	opcode <=  "001111";  -- LUI
 	wait for 4 ps;
